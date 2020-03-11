@@ -1,9 +1,15 @@
+/* eslint-disable max-len */
 <template>
-  <div class="container">
+  <div
+    class="structure-item-container block border rounded-md bg-white overflow-hidden object-cover"
+  >
     <img
-      src="https://s3.amazonaws.com/hr-assets/0/1527626183-88c8070977-isitBSTSample0.png"
-      alt="Binary Search"
-    ><span>{{ msg }}</span>
+      class=""
+      :src="dataStructure.imageUrl"
+      :alt="dataStructure.name"
+    ><h4 class="p-4">
+      {{ dataStructure.name }}
+    </h4>
   </div>
 </template>
 
@@ -11,26 +17,18 @@
 export default {
   name: 'StructureItem',
   props: {
-    name: String,
-    imageURL: String,
+    dataStructure: {
+      name: String,
+      imageUrl: String,
+    },
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
- {
+span{
   margin: 40px 0 0;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #c7733b;
-}
+
 </style>
