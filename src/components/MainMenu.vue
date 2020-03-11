@@ -1,5 +1,5 @@
 <template>
-  <StructureItem name="Search Tree" />
+  <StructureItem :dataStructure="dataStructure" />
 </template>
 
 <script>
@@ -13,6 +13,12 @@ export default {
   props: {
     msg: String,
   },
+  data: () => ({
+    dataStructure: {
+      name: 'Pablo Lescano',
+      imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+    },
+  }),
 
 };
 </script>
