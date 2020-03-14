@@ -1,5 +1,9 @@
 <template>
-  <div id="app">
+  <div
+    id="app"
+    class="flex bg-gray-200 justify-center"
+  >
+    <MainMenu />
     <BTreeVisualizer />
   </div>
 </template>
@@ -24,5 +28,6 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+
 }
 </style>
