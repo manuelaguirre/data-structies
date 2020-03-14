@@ -1,18 +1,17 @@
 <template>
   <div id="app">
-    <MainMenu />
+    <BTreeVisualizer />
   </div>
 </template>
 
 <script>
-import MainMenu from './components/MainMenu.vue';
+import BTreeVisualizer from './components/BTreeVisualizer.vue';
 
 
 export default {
   name: 'App',
   components: {
-
-    MainMenu,
+    BTreeVisualizer,
   },
 };
 </script>
