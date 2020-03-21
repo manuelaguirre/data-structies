@@ -10,12 +10,14 @@
 
 <script>
 import BTreeVisualizer from './components/BTreeVisualizer.vue';
+import MainMenu from './components/MainMenu.vue';
 
 
 export default {
   name: 'App',
   components: {
     BTreeVisualizer,
+    MainMenu,
   },
 };
 </script>

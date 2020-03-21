@@ -1,14 +1,19 @@
 <template>
-  <div class="b-tree-visualizer">
+  <div id="b-bTree-visualizer">
     KAKO
   </div>
 </template>
 
 <script>
+import * as d3 from 'd3';
+
+d3.select('#b-tree-visualizer').append('div');
+
+
 export default {
   name: 'BTree',
   props: {
-    msg: String,
+
   },
 };
 </script>
