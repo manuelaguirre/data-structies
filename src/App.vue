@@ -1,19 +1,25 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div
+    id="app"
+    class="flex bg-gray-200 justify-center"
+  >
+    <MainMenu />
+    <BTreeVisualizer />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import BTreeVisualizer from './components/BTreeVisualizer.vue';
+import MainMenu from './components/MainMenu.vue';
+
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    BTreeVisualizer,
+    MainMenu,
+  },
+};
 </script>
 
 <style>
@@ -24,5 +30,6 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+
 }
 </style>
