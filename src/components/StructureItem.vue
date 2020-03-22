@@ -12,7 +12,9 @@
       >
     </div>
     <h4 class="pt-8">
-      {{ dataStructure.name }}
+      <router-link to="/b-tree-visualizer">
+        {{ dataStructure.name }}
+      </router-link>
     </h4>
   </div>
 </template>

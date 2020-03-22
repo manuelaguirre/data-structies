@@ -3,21 +3,17 @@
     id="app"
     class="flex bg-gray-200 justify-center"
   >
-    <MainMenu />
-    <BTreeVisualizer />
+    <router-view />
   </div>
 </template>
 
 <script>
-import BTreeVisualizer from './components/BTreeVisualizer.vue';
-import MainMenu from './components/MainMenu.vue';
 
 
 export default {
   name: 'App',
   components: {
-    BTreeVisualizer,
-    MainMenu,
+
   },
 };
 </script>
