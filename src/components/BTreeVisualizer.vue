@@ -1,46 +1,65 @@
 <template>
   <div id="b-bTree-visualizer">
-    KAKO
+    <button
+      class="structies-button back"
+      @click="goBack"
+    >
+      Go back
+    </button>
+    <div>
+      <h1 class="name">
+        Structure: {{ $route.params.code }}
+      </h1>
+    </div>
   </div>
 </template>
 
 <script>
 import * as d3 from 'd3';
+import Router from 'vue-router';
 
 d3.select('#b-tree-visualizer').append('div');
-
+const router = new Router();
 
 export default {
   name: 'BTree',
   props: {
 
   },
+  methods: {
+    goBack() {
+      router.back();
+    },
+  },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-
-.node {
-cursor: pointer;
-}
-
-.node circle {
-fill: #fff;
-stroke: steelblue;
-stroke-width: 3px;
-}
-
-.node text {
- font: 12px sans-serif;
-}
-
-.link {
-fill: none;
-stroke: #ccc;
-stroke-width: 2px;
-}
+  .name {
+    font-size: 3rem;
+  }
+  .structies-button {
+    background-color:#0000ff;
+    border-radius: 28px;
+    border: 1px solid #c2c5ff;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    height: 45px;
+    font-family: Arial;
+    font-size: 17px;
+    padding: 10px 31px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #001ba3;
+  }
+  .structies-button:hover {
+    background-color:#3c48fa;
+  }
+  .back {
+    position: absolute;
+    left: 0;
+  }
 
 
 </style>
