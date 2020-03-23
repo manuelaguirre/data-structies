@@ -1,11 +1,12 @@
 <template>
   <div
     id="menu-container"
-    class="max-w-3xl"
+    class="max-w-3xl menu-container"
   >
     <StructureItem
       v-for="item in dataStructures"
-      :key="item.name"
+      :key="item.code"
+      :name="item.name"
       :data-structure="item"
     />
   </div>
@@ -20,37 +21,45 @@ export default {
     StructureItem,
   },
   props: {
-    msg: String,
   },
   data: () => ({
     dataStructures: [{
       name: 'Pablo Lescano',
       imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+      code: 'pablo-lescano-1',
     },
     {
       name: 'Pablo Lescano 2',
       imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+      code: 'pablo-lescano-2',
     }, {
       name: 'Pablo Lescano 3',
       imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+      code: 'pablo-lescano-3',
     }, {
       name: 'Pablo Lescano 4',
       imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+      code: 'pablo-lescano-4',
     }, {
       name: 'Pablo Lescano 5',
       imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+      code: 'pablo-lescano-5',
     }, {
       name: 'Pablo Lescano 6',
       imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+      code: 'pablo-lescano-6',
     }, {
       name: 'Pablo Lescano 7',
       imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+      code: 'pablo-lescano-7',
     }, {
       name: 'Pablo Lescano 8',
       imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+      code: 'pablo-lescano-8',
     }, {
       name: 'Pablo Lescano 9',
       imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+      code: 'pablo-lescano-9',
     }],
   }),
 
@@ -59,18 +68,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+  .menu-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
 </style>

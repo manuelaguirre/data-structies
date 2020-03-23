@@ -20,7 +20,7 @@ Vue.use(VueRouter);
 // `Vue.extend()`, or just a component options object.
 // We'll talk about nested routes later.
 const routes = [
-  { path: '/b-tree-visualizer', component: BTreeVisualizer },
+  { path: '/structure/:code', component: BTreeVisualizer },
   { path: '/', component: MainMenu },
 ];
 
