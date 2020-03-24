@@ -10,15 +10,32 @@
       <h1 class="name">
         Structure: {{ $route.params.code }}
       </h1>
-    </div>
+    </div><svg id="canvas">
+      SVG canvas
+    </svg>
   </div>
 </template>
 
 <script>
 import * as d3 from 'd3';
 import Router from 'vue-router';
+import btree from '../assets/implementations/btree';
+
+const Tree = btree.create(2, btree.numcmp);
+const tree = new Tree();
+tree.put(0, 'null');
+tree.put(1, 'one');
+tree.put(2, 'verde');
+tree.put(4, 'azul');
+tree.put(5, 'rojinho');
+tree.put(8, 'marron');
+tree.del(1);
+console.log(tree.get(8));// == "marron")
+
 
 d3.select('#b-tree-visualizer').append('div');
+
+
 const router = new Router();
 
 export default {

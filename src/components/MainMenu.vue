@@ -26,6 +26,10 @@ export default {
     dataStructures: [{
       name: 'Pablo Lescano',
       imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+      code: 'b-tree',
+    }, {
+      name: 'Pablo Lescano',
+      imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
       code: 'pablo-lescano-1',
     },
     {
