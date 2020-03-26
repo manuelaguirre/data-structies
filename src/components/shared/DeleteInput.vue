@@ -1,18 +1,17 @@
 <template>
   <div class="button-container">
-    <md-field>
-      <label>Delete a Value</label>
-      <md-input
-        :value="deletedValue"
-        @input="deletedValue = $event"
-      />
-    </md-field>
-    <md-button
-      class="button md-raised md-accent"
+    <v-text-field
+      label="Delete a Value"
+      :value="deletedValue"
+      @input="deletedValue = $event"
+    />
+    <v-btn
+      color="error"
+      class="button"
       @click="deleteValue"
     >
-      delete Value
-    </md-button>
+      Delete Value
+    </v-btn>
   </div>
 </template>
 

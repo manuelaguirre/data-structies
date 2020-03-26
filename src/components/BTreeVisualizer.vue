@@ -3,12 +3,12 @@
     id="b-bTree-visualizer"
     class="container"
   >
-    <md-button
+    <v-btn
       class="back md-raised md-primary"
       @click="goBack"
     >
       Go back
-    </md-button>
+    </v-btn>
     <div class="title">
       <h1 class="name">
         Structure: {{ $route.params.code }}

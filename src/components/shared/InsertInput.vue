@@ -1,18 +1,17 @@
 <template>
   <div class="button-container">
-    <md-field>
-      <label>Insert a Value</label>
-      <md-input
-        :value="insertedValue"
-        @input="insertedValue = $event"
-      />
-    </md-field>
-    <md-button
-      class="button md-raised md-primary"
+    <v-text-field
+      label="Insert a Value"
+      :value="insertedValue"
+      @input="insertedValue = $event"
+    />
+    <v-btn
+      class="button"
+      color="primary"
       @click="insertValue"
     >
       Insert Value
-    </md-button>
+    </v-btn>
   </div>
 </template>
 
