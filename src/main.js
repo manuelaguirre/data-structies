@@ -4,7 +4,7 @@ import App from './App.vue';
 import MainMenu from './components/MainMenu.vue';
 import BTreeVisualizer from './components/BTreeVisualizer.vue';
 import './assets/css/tailwind.css';
-
+import vuetify from './plugins/vuetify';
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
@@ -40,5 +40,6 @@ const router = new VueRouter({
 
 new Vue({
   router,
+  vuetify,
   render: (h) => h(App),
 }).$mount('#app');
