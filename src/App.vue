@@ -1,10 +1,12 @@
 <template>
-  <div
-    id="app"
-    class="flex bg-gray-200 justify-center"
-  >
-    <router-view />
-  </div>
+  <v-app>
+    <div
+      id="app"
+      class="flex bg-gray-200 justify-center"
+    >
+      <router-view />
+    </div>
+  </v-app>
 </template>
 
 <script>
