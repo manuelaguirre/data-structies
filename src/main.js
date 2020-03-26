@@ -1,13 +1,17 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import VueMaterial from 'vue-material';
 import App from './App.vue';
 import MainMenu from './components/MainMenu.vue';
 import BTreeVisualizer from './components/BTreeVisualizer.vue';
+import 'vue-material/dist/vue-material.min.css';
+import 'vue-material/dist/theme/default.css';
 import './assets/css/tailwind.css';
 
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
+Vue.use(VueMaterial);
 
 // 0. If using a module system (e.g. via vue-cli), import Vue and VueRouter
 // and then call `Vue.use(VueRouter)`.
