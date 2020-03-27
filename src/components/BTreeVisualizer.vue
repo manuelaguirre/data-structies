@@ -1,18 +1,27 @@
 <template>
-  <div id="b-bTree-visualizer">
-    <button
-      class="structies-button back"
+  <div
+    id="b-bTree-visualizer"
+    class="container"
+  >
+    <v-btn
+      class="back md-raised md-primary"
       @click="goBack"
     >
       Go back
-    </button>
-    <div>
+    </v-btn>
+    <div class="title">
       <h1 class="name">
         Structure: {{ $route.params.code }}
       </h1>
-    </div><svg id="canvas">
-      SVG canvas
-    </svg>
+    </div>
+    <div class="buttons">
+      <InsertInput
+        @myEvent="insertInputEvent"
+      />
+      <DeleteInput
+        @myEvent="deleteInputEvent"
+      />
+    </div>
   </div>
 </template>
 
@@ -20,6 +29,8 @@
 import * as d3 from 'd3';
 import Router from 'vue-router';
 import btree from '../assets/implementations/btree';
+import InsertInput from './shared/InsertInput.vue';
+import DeleteInput from './shared/DeleteInput.vue';
 
 const Tree = btree.create(2, btree.numcmp);
 const tree = new Tree();
@@ -30,22 +41,30 @@ tree.put(4, 'azul');
 tree.put(5, 'rojinho');
 tree.put(8, 'marron');
 tree.del(1);
-console.log(tree.get(8));// == "marron")
-
-
+// console.log(tree.get(8));// == "marron")
 d3.select('#b-tree-visualizer').append('div');
-
 
 const router = new Router();
 
 export default {
   name: 'BTree',
-  props: {
-
+  components: {
+    InsertInput,
+    DeleteInput,
   },
   methods: {
     goBack() {
       router.back();
+    },
+    insertInputEvent(event) {
+      console.log('Insert: ', event);
+      tree.put(event, 'insert');
+      console.log(tree);
+    },
+    deleteInputEvent(event) {
+      console.log('Delete: ', event);
+      tree.del(event);
+      console.log(tree);
     },
   },
 };
@@ -55,20 +74,9 @@ export default {
 <style scoped>
   .name {
     font-size: 3rem;
-  }
-  .structies-button {
-    background-color:#0000ff;
-    border-radius: 28px;
-    border: 1px solid #c2c5ff;
-    display: inline-block;
-    cursor: pointer;
-    color: #ffffff;
-    height: 45px;
-    font-family: Arial;
-    font-size: 17px;
-    padding: 10px 31px;
-    text-decoration: none;
-    text-shadow: 0px 1px 0px #001ba3;
+    min-height: fit-content;
+    height: 80px;
+    line-height: 60px;
   }
   .structies-button:hover {
     background-color:#3c48fa;
@@ -76,6 +84,16 @@ export default {
   .back {
     position: absolute;
     left: 0;
+    top: 0;
+  }
+  .buttons {
+    display: flex;
+    place-content: space-around;
+  }
+  .container {
+    width: 100%;
+    padding: 50px;
+    flex-direction: column;
   }
 
 

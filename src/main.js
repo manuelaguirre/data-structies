@@ -1,14 +1,15 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import vuetify from './plugins/vuetify';
 import App from './App.vue';
 import MainMenu from './components/MainMenu.vue';
 import BTreeVisualizer from './components/BTreeVisualizer.vue';
 import LineChartExample from './components/mock/LineChartExample.vue';
 import './assets/css/tailwind.css';
 
-
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
+
 
 // 0. If using a module system (e.g. via vue-cli), import Vue and VueRouter
 // and then call `Vue.use(VueRouter)`.
@@ -41,5 +42,6 @@ const router = new VueRouter({
 
 new Vue({
   router,
+  vuetify,
   render: (h) => h(App),
 }).$mount('#app');
