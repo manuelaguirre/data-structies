@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import btree from '../assets/implementations/btree';
+import btree from '../../assets/implementations/btree';
 
 const Tree = btree.create(2, btree.numcmp);
 
