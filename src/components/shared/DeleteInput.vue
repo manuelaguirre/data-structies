@@ -1,5 +1,5 @@
 <template>
-  <div class="button-container">
+  <div class="flex button-container">
     <v-text-field
       label="Delete a Value"
       :value="deletedValue"
@@ -33,7 +33,6 @@ export default {
 
 <style>
 .button-container {
-  display: flex;
   width: 100%;
   max-width: 300px;
 }

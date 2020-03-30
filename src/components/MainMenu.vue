@@ -1,7 +1,7 @@
 <template>
   <div
     id="menu-container"
-    class="max-w-3xl menu-container"
+    class="flex max-w-3xl menu-container"
   >
     <StructureItem
       v-for="item in dataStructures"
@@ -73,7 +73,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .menu-container {
-    display: flex;
     flex-wrap: wrap;
   }
 </style>
