@@ -1,8 +1,11 @@
 <template>
-  <svg
-    :width="width"
-    :height="height"
-  />
+  <div class="container">
+    <span> Visualizer</span>
+    <svg
+      :width="width"
+      :height="height"
+    />
+  </div>
 </template>
 
 <script>
