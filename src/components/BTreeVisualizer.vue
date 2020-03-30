@@ -22,6 +22,9 @@
         @myEvent="deleteInputEvent"
       />
     </div>
+    <div class="visualier">
+      <Visualizer />
+    </div>
   </div>
 </template>
 
@@ -31,6 +34,7 @@ import Router from 'vue-router';
 import btree from '../assets/implementations/btree';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
+import Visualizer from './shared/Visualizer.vue';
 
 const Tree = btree.create(2, btree.numcmp);
 const tree = new Tree();
@@ -51,6 +55,7 @@ export default {
   components: {
     InsertInput,
     DeleteInput,
+    Visualizer,
   },
   methods: {
     goBack() {
