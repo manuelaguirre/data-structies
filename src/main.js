@@ -4,6 +4,7 @@ import vuetify from './plugins/vuetify';
 import App from './App.vue';
 import MainMenu from './components/MainMenu.vue';
 import BTreeVisualizer from './components/BTreeVisualizer.vue';
+import LineChartExample from './components/mock/LineChartExample.vue';
 import './assets/css/tailwind.css';
 
 Vue.config.productionTip = false;
@@ -23,7 +24,7 @@ Vue.use(VueRouter);
 const routes = [
   { path: '/structure/:code', component: BTreeVisualizer },
   { path: '/', component: MainMenu },
-];
+  { path: '/linechart', component: LineChartExample }];
 
 // 3. Create the router instance and pass the `routes` option
 // You can pass in additional options here, but let's
