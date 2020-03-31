@@ -1,7 +1,7 @@
 <template>
   <div
     id="b-bTree-visualizer"
-    class="container"
+    class="flex tree-container"
   >
     <v-btn
       class="back md-raised md-primary"
@@ -14,7 +14,7 @@
         Structure: {{ $route.params.code }}
       </h1>
     </div>
-    <div class="buttons">
+    <div class="flex buttons">
       <InsertInput
         @myEvent="insertInputEvent"
       />
@@ -22,7 +22,7 @@
         @myEvent="deleteInputEvent"
       />
     </div>
-    <div class="visualier">
+    <div class="visualier-cont">
       <Visualizer />
     </div>
   </div>
@@ -92,13 +92,16 @@ export default {
     top: 0;
   }
   .buttons {
-    display: flex;
     place-content: space-around;
+    flex: 0 0 auto;
   }
-  .container {
+  .tree-container {
     width: 100%;
-    padding: 50px;
+    height: 100vh;
     flex-direction: column;
+  }
+  .visualier-cont {
+    flex: 1;
   }
 
 
