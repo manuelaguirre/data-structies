@@ -428,6 +428,30 @@
             }
             if (this.nodes[0] !== null) this.nodes[0].print(indent+2);
         };
+
+         /**
+         * Returns the node's entire subtree as a Javascript Object, including keys.
+         * @returns {Object}
+         */
+
+        TreeNode.prototype.toJSON = function() {
+            var val = [];
+            for (var i=0; i<this.leaves.length; i++) {
+                val.push(this.leaves[i].key);
+            }            
+            var nodeArray = [];
+            if (this.nodes[0] !== null) nodeArray.push(this.nodes[0]);
+            for (i=0; i<=this.leaves.length-1; i++) {
+                if (this.nodes[i+1] !== null) nodeArray.push(this.nodes[i+1]);               
+            }
+            var result = {};
+            result.data = {};
+            result.data.keys = val;
+
+            result.children = nodeArray.map(n=>n.toJSON()) ;
+
+            return result;           
+        };
         
         /**
          * Constructs a new Leaf containing a value.
@@ -702,8 +726,17 @@
          * @returns {string}
          */
         Tree.prototype.toString = function() {
-            return "Tree("+order+") "+this.root.toString();
+            return "Tree("+order+") "+this.root.toString(true);
         };
+
+        /**
+         * Returns an object representation of this instance.
+         * @returns {Object}
+         */
+        Tree.prototype.toJSON = function() {
+            return this.root.toJSON();
+        };
+
         
         return Tree;
     };
