@@ -93,6 +93,7 @@ export default {
   }
   .buttons {
     place-content: space-around;
+
     flex: 0 0 auto;
   }
   .tree-container {
