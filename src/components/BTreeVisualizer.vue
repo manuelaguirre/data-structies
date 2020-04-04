@@ -36,7 +36,7 @@ import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 
-const Tree = btree.create(2, btree.numcmp);
+const Tree = btree.create(2);
 
 
 const router = new Router();

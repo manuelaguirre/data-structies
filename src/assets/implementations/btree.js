@@ -90,7 +90,8 @@
      * @returns {number} -1 if a < b, 1 if a > b, 0 otherwise
      * @expose
      */
-    btree.numcmp = function intcmp(a, b) {
+    btree.numcmp = (numA, numB) => {
+        let [a, b] = [+numA, +numB];
         return a < b ? -1 : (a > b ? 1 : 0);
     };
     
@@ -106,7 +107,7 @@
         
         // Validate order
         if (typeof order == 'undefined') {
-            order = 52; // Benchmarks proofed that this is close to the optimum
+            order = 2; // Benchmarks proofed that this is close to the optimum
         } else if (typeof order == 'number') {
             order = Math.floor(order);
         } else {
@@ -186,6 +187,7 @@
             if (this.leaves.length > 0) {
                 var a = this.leaves[0];
                 if (compare(a.key, key) == 0) return { leaf: a, index: 0 };
+                console.log(compare)
                 if (compare(key, a.key) < 0) {
                     if (this.nodes[0] !== null) {
                         return this.nodes[0].search(key); // Left
