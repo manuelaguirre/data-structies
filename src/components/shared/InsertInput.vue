@@ -2,15 +2,21 @@
   <div class="flex button-container">
     <v-text-field
       class="text-field"
-      label="Insert a Value"
+      label="Value"
       :value="insertedValue"
       @input="insertedValue = $event"
-      @keyup.enter="insertValue"
+    />
+    <v-text-field
+      class="text-field"
+      label="Key"
+      :value="insertedKey"
+      @input="insertedKey = $event"
     />
     <v-btn
       class="button"
       color="primary"
       @click="insertValue"
+      @keyup.enter="insertValue"
     >
       Insert
     </v-btn>
@@ -23,12 +29,14 @@ export default {
   data() {
     return {
       insertedValue: '',
+      insertedKey: '',
     };
   },
   methods: {
     insertValue() {
-      this.$emit('myEvent', this.insertedValue);
+      this.$emit('myEvent', { value: this.insertedValue, key: this.insertedKey });
       this.insertedValue = '';
+      this.insertedKey = '';
     },
   },
 };
@@ -37,7 +45,7 @@ export default {
 <style>
 .button-container {
   width: 100%;
-  max-width: 300px;
+  max-width: 400px;
 }
 .text-field{
   margin-bottom: 1rem;
