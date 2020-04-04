@@ -24,7 +24,7 @@
     </div>
     <div class="visualier-cont">
       <Visualizer
-        :structuredata="tree"
+        :structuredata="displayTree"
       />
     </div>
   </div>
@@ -51,6 +51,7 @@ export default {
   data() {
     return {
       tree: new Tree(),
+      displayTree: {},
     };
   },
   created() {
@@ -61,6 +62,7 @@ export default {
     this.tree.put(6, 'rojinho');
     this.tree.put(8, 'marron');
     this.tree.del(1);
+    this.displayTree = this.transformB3toD3Data(this.tree);
   },
   methods: {
     goBack() {
@@ -68,9 +70,52 @@ export default {
     },
     insertInputEvent(event) {
       this.tree.put(event.key, event.value);
+      this.displayTree = this.transformB3toD3Data(this.tree);
     },
     deleteInputEvent(event) {
       this.tree.del(event);
+      this.displayTree = this.transformB3toD3Data(this.tree);
+    },
+    transformB3toD3Data(oldTree) {
+      const newTree = {};
+      if (oldTree && oldTree.root) {
+        // Add the root. Then add child recursevely
+        newTree.value = oldTree.root.leaves.reduce((val, leave) => `${val} ${leave.key}-`, '');
+        newTree.value = newTree.value.substring(0, newTree.value.length - 1);
+        newTree.name = oldTree.root.leaves.reduce((val, leave) => `${val} ${leave.value}(${leave.key})-`, '');
+        newTree.name = newTree.name.substring(0, newTree.name.length - 1);
+        newTree.children = [];
+        oldTree.root.nodes.forEach((node) => {
+          const child = this.transformB3toD3DataChild(node);
+          if (child) {
+            newTree.children.push(child);
+          }
+        });
+      }
+      return newTree;
+    },
+    transformB3toD3DataChild(node) {
+      // Recursive way to disply node children
+      if (!node || !node.leaves) {
+        return null;
+      }
+      const newnode = {};
+      if (node && node.leaves) {
+        newnode.value = node.leaves.reduce((val, leave) => `${val}${leave.key}-`, '');
+        newnode.value = newnode.value.substring(0, newnode.value.length - 1);
+        newnode.name = node.leaves.reduce((val, leave) => `${val}${leave.value}(${leave.key})-`, '');
+        newnode.name = newnode.name.substring(0, newnode.name.length - 1);
+        newnode.children = [];
+        if (node.nodes) {
+          node.nodes.forEach((n_) => {
+            const child = this.transformB3toD3DataChild(n_);
+            if (child) {
+              newnode.children.push(child);
+            }
+          });
+        }
+      }
+      return newnode;
     },
   },
 };
