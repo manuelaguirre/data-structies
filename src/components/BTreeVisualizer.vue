@@ -23,7 +23,7 @@
       />
     </div>
     <div class="visualier-cont">
-      <Visualizer />
+      <Visualizer :structuredata="displayTree" />
     </div>
   </div>
 </template>
@@ -56,21 +56,32 @@ export default {
     DeleteInput,
     Visualizer,
   },
+  data() {
+    return {
+      bTree: new Tree(),
+    };
+  },
+  computed: {
+    displayTree() {
+      return this.bTree.toJSON();
+    },
+  },
   methods: {
     goBack() {
       router.back();
     },
     insertInputEvent(event) {
       console.log('Insert: ', event);
-      tree.put(event, 'insert');
-      console.log(tree.toString(true));
+      this.bTree.put(event, 'insert');
+      console.log(this.bTree.toString(true));
     },
     deleteInputEvent(event) {
       console.log('Delete: ', event);
-      tree.del(event);
-      tree.print(0);
+      this.bTree.del(event);
+      this.bTree.print(0);
       console.log(tree.toJSON());
     },
+
   },
 };
 </script>

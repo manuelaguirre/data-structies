@@ -52,6 +52,7 @@ export default {
   props: {
     width: { type: Number, default: 800 },
     height: { type: Number, default: 450 },
+    structureData: { type: String, default: '' },
   },
   data() {
     return {

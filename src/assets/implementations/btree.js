@@ -731,10 +731,10 @@
 
         /**
          * Returns an object representation of this instance.
-         * @returns {Object}
+         * @returns {string}
          */
         Tree.prototype.toJSON = function() {
-            return this.root.toJSON();
+            return JSON.stringify(this.root.toJSON());
         };
 
         
