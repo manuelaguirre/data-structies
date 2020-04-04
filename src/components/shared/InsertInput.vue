@@ -5,18 +5,19 @@
       label="Value"
       :value="insertedValue"
       @input="insertedValue = $event"
+      @keyup.enter="insertValue"
     />
     <v-text-field
       class="text-field"
       label="Key"
       :value="insertedKey"
       @input="insertedKey = $event"
+      @keyup.enter="insertValue"
     />
     <v-btn
       class="button"
       color="primary"
       @click="insertValue"
-      @keyup.enter="insertValue"
     >
       Insert
     </v-btn>
