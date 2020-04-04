@@ -1,16 +1,18 @@
 <template>
   <div class="flex button-container">
     <v-text-field
+      color="error"
       label="Delete a Value"
       :value="deletedValue"
       @input="deletedValue = $event"
+      @keyup.enter="deleteValue"
     />
     <v-btn
       color="error"
       class="button"
       @click="deleteValue"
     >
-      Delete Value
+      Delete
     </v-btn>
   </div>
 </template>
@@ -20,12 +22,13 @@ export default {
   name: 'DeleteInput',
   data() {
     return {
-      deletedValue: 0,
+      deletedValue: '',
     };
   },
   methods: {
     deleteValue() {
       this.$emit('myEvent', this.deletedValue);
+      this.deletedValue = '';
     },
   },
 };
