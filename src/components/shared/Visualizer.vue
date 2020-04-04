@@ -52,79 +52,35 @@ export default {
   props: {
     width: { type: Number, default: 800 },
     height: { type: Number, default: 450 },
-    structureData: { type: String, default: '' },
+    structureData: { type: Object, default: undefined },
   },
+
   data() {
     return {
+      margin: {
+        top: 20, right: 30, bottom: 30, left: 40,
+      },
       settings: {
         strokeColor: '#29B5FF',
         width: 100,
-      },
-      mockdata: {
-        name: 'A1',
-        value: 400,
-        children: [
-          {
-            name: 'B1',
-            value: 450,
-            children: [
-              {
-                name: 'C1',
-                value: 100,
-              },
-              {
-                name: 'C2',
-                value: 300,
-              },
-              {
-                name: 'C3',
-                value: 200,
-              },
-            ],
-          },
-          {
-            name: 'B2',
-            value: 200,
-            children: [
-              {
-                name: 'C4',
-                value: 100,
-              },
-              {
-                name: 'C5',
-                value: 300,
-              },
-              {
-                name: 'C6',
-                value: 200,
-              },
-            ],
-          },
-        ],
       },
     };
   },
   computed: {
     root() {
-      if (this.mockdata) {
-        // Use data from the B-tree instead of mock
-        const root = d3.hierarchy(this.mockdata);
-        return this.tree(root);
-      }
-      return null;
-    },
-    tree() {
-      return d3.tree().size([600, this.settings.width - 300]);
+      const root = d3.hierarchy(this.structureData);
+      console.log(root);
+      return this.tree(root);
     },
     nodes() {
       if (this.root) {
-        const nodes = this.root.descendants().map((d) => {
+        const nodes = this.root.descendants().map((d, i) => {
           const x = `${200 + d.x}px`;
           const y = `${parseInt(-1 * d.y + 30, 10)}px`;
           return {
-            id: `${d.data.value}-${d.data.name}`,
+            id: `${i}`,
             r: 2.5,
-            text: d.data.name,
+            text: d.data.leaves.keys.toString(),
             style: {
               transform: `translate(${x},${y})`,
             },
@@ -139,18 +95,18 @@ export default {
         });
         return nodes;
       }
-      return null;
+      return undefined;
     },
     links() {
       const that = this;
       if (this.root) {
-        const links = this.root.descendants().slice(1).map((d) => {
+        const links = this.root.descendants().slice(1).map((d, i) => {
           const x = d.x + 200;
           const parentx = d.parent.x + 200;
           const y = parseInt(-1 * d.y + 30, 10);
           const parenty = parseInt(-1 * d.parent.y + 30, 10);
           return {
-            id: `${d.data.value}-${d.data.name}`,
+            id: i,
             d: `M${x},${y}L${parentx},${parenty}`,
             style: {
               stroke: that.settings.strokeColor,
@@ -159,10 +115,11 @@ export default {
         });
         return links;
       }
-      return null;
+      return undefined;
     },
-  },
-  methods: {
+    tree() {
+      return d3.tree().size([600, this.settings.width - 300]);
+    },
     getWith() {
       return this.$refs && this.$refs.cont ? this.$refs.cont.clientWidth : 800;
     },

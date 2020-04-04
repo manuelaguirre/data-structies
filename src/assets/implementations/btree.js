@@ -445,8 +445,8 @@
                 if (this.nodes[i+1] !== null) nodeArray.push(this.nodes[i+1]);               
             }
             var result = {};
-            result.data = {};
-            result.data.keys = val;
+            result.leaves = {};
+            result.leaves.keys = val;
 
             result.children = nodeArray.map(n=>n.toJSON()) ;
 
@@ -734,7 +734,7 @@
          * @returns {string}
          */
         Tree.prototype.toJSON = function() {
-            return JSON.stringify(this.root.toJSON());
+            return this.root.toJSON();
         };
 
         
