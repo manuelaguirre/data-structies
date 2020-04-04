@@ -38,15 +38,14 @@ import Visualizer from './shared/Visualizer.vue';
 
 const Tree = btree.create(2, btree.numcmp);
 const tree = new Tree();
-tree.put(0, 'null');
 tree.put(1, 'one');
 tree.put(2, 'verde');
 tree.put(4, 'azul');
 tree.put(5, 'rojinho');
 tree.put(8, 'marron');
 tree.del(1);
-// console.log(tree.get(8));// == "marron")
 d3.select('#b-tree-visualizer').append('div');
+console.log(tree.print);
 
 const router = new Router();
 
@@ -64,12 +63,13 @@ export default {
     insertInputEvent(event) {
       console.log('Insert: ', event);
       tree.put(event, 'insert');
-      console.log(tree);
+      console.log(tree.toString(true));
     },
     deleteInputEvent(event) {
       console.log('Delete: ', event);
       tree.del(event);
-      console.log(tree);
+      tree.print(0);
+      console.log(tree.toJSON());
     },
   },
 };
