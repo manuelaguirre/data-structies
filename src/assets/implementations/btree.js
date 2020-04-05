@@ -90,7 +90,8 @@
      * @returns {number} -1 if a < b, 1 if a > b, 0 otherwise
      * @expose
      */
-    btree.numcmp = function intcmp(a, b) {
+    btree.numcmp = (numA, numB) => {
+        let [a, b] = [+numA, +numB];
         return a < b ? -1 : (a > b ? 1 : 0);
     };
     
@@ -106,7 +107,7 @@
         
         // Validate order
         if (typeof order == 'undefined') {
-            order = 52; // Benchmarks proofed that this is close to the optimum
+            order = 2; // Benchmarks proofed that this is close to the optimum
         } else if (typeof order == 'number') {
             order = Math.floor(order);
         } else {
@@ -424,7 +425,6 @@
             var space = ""; for (var i=0; i<indent; i++) space+=" ";
             for (i=this.leaves.length-1; i>=0; i--) {
                 if (this.nodes[i+1] !== null) this.nodes[i+1].print(indent+2);
-                console.log(space+this.leaves[i].key+(this.parent instanceof Tree ? "*" : ""));
             }
             if (this.nodes[0] !== null) this.nodes[0].print(indent+2);
         };
@@ -445,8 +445,8 @@
                 if (this.nodes[i+1] !== null) nodeArray.push(this.nodes[i+1]);               
             }
             var result = {};
-            result.data = {};
-            result.data.keys = val;
+            result.leaves = {};
+            result.leaves.keys = val;
 
             result.children = nodeArray.map(n=>n.toJSON()) ;
 
@@ -731,7 +731,7 @@
 
         /**
          * Returns an object representation of this instance.
-         * @returns {Object}
+         * @returns {string}
          */
         Tree.prototype.toJSON = function() {
             return this.root.toJSON();

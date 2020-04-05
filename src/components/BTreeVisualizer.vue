@@ -23,29 +23,21 @@
       />
     </div>
     <div class="visualier-cont">
-      <Visualizer />
+      <Visualizer :structure-data="displayTree" />
     </div>
   </div>
 </template>
 
 <script>
-import * as d3 from 'd3';
+
 import Router from 'vue-router';
 import btree from '../assets/implementations/btree';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 
-const Tree = btree.create(2, btree.numcmp);
-const tree = new Tree();
-tree.put(1, 'one');
-tree.put(2, 'verde');
-tree.put(4, 'azul');
-tree.put(5, 'rojinho');
-tree.put(8, 'marron');
-tree.del(1);
-d3.select('#b-tree-visualizer').append('div');
-console.log(tree.print);
+const Tree = btree.create(2);
+
 
 const router = new Router();
 
@@ -56,21 +48,33 @@ export default {
     DeleteInput,
     Visualizer,
   },
+  data() {
+    return {
+      bTree: new Tree(),
+    };
+  },
+  computed: {
+    displayTree() {
+      return this.bTree.toJSON();
+    },
+  },
   methods: {
     goBack() {
       router.back();
     },
     insertInputEvent(event) {
       console.log('Insert: ', event);
-      tree.put(event, 'insert');
-      console.log(tree.toString(true));
+      this.bTree.put(event, 'insert');
+      console.log(this.bTree.toString(true));
+      console.log(this.bTree.toJSON());
     },
     deleteInputEvent(event) {
       console.log('Delete: ', event);
-      tree.del(event);
-      tree.print(0);
-      console.log(tree.toJSON());
+      this.bTree.del(event);
+      this.bTree.print(0);
+      console.log(this.bTree.toJSON());
     },
+
   },
 };
 </script>
