@@ -187,7 +187,6 @@
             if (this.leaves.length > 0) {
                 var a = this.leaves[0];
                 if (compare(a.key, key) == 0) return { leaf: a, index: 0 };
-                console.log(compare)
                 if (compare(key, a.key) < 0) {
                     if (this.nodes[0] !== null) {
                         return this.nodes[0].search(key); // Left
@@ -426,7 +425,6 @@
             var space = ""; for (var i=0; i<indent; i++) space+=" ";
             for (i=this.leaves.length-1; i>=0; i--) {
                 if (this.nodes[i+1] !== null) this.nodes[i+1].print(indent+2);
-                console.log(space+this.leaves[i].key+(this.parent instanceof Tree ? "*" : ""));
             }
             if (this.nodes[0] !== null) this.nodes[0].print(indent+2);
         };

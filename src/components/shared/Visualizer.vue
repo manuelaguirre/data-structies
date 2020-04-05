@@ -69,7 +69,6 @@ export default {
   computed: {
     root() {
       const root = d3.hierarchy(this.structureData);
-      console.log(root);
       return this.tree(root);
     },
     nodes() {
