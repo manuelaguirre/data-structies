@@ -29,16 +29,22 @@
           :style="node.style"
           @click="select(index, node)"
         >
-          <circle
-            :r="node.r"
-            :style="{'fill': '#bfbfbf'}"
-          />
+          <g
+            style=""
+          ><rect
+            v-for="key in node.keys"
+            :key="key.text"
+            :width="settings.keyCellWidth"
+            :height="settings.keyCellHeight"
+            :x="key.position * settings.keyCellWidth"
+            :y="0"
+          /></g>
           <text
             :dx="node.textpos.x"
             :dy="node.textpos.y"
             :style="node.textStyle"
-          >{{ node.text }}</text>
-        </g>
+          >{{ node.text }}</text></g>
+
       </transition-group>
     </svg>
   </div>
@@ -52,7 +58,8 @@ export default {
   props: {
     width: { type: Number, default: 800 },
     height: { type: Number, default: 450 },
-    structureData: { type: Object, default: undefined },
+    structureData: { type: Object, default: undefined }
+    ,
   },
 
   data() {
@@ -62,7 +69,9 @@ export default {
       },
       settings: {
         strokeColor: '#29B5FF',
-        width: 100,
+        width: '100',
+        keyCellWidth: 30,
+        keyCellHeight: 20,
       },
     };
   },
@@ -76,12 +85,19 @@ export default {
         const nodes = this.root.descendants().map((d, i) => {
           const x = `${this.margin.left + d.x}px`;
           const y = `${parseInt(-1 * d.y + this.margin.top, 10)}px`;
+
           return {
             id: `${i}`,
             r: 2.5,
-            text: d.data.leaves.keys.toString(),
+            keys: d.data.leaves.keys.map((k, ii) => ({
+              text: k,
+              position: ii,
+            })),
             style: {
               transform: `translate(${x},${y})`,
+              fill: 'white',
+              stroke: 'black',
+              strokeWidth: 2,
             },
             textpos: {
               x: d.children ? -8 : 8,
@@ -117,7 +133,7 @@ export default {
       return undefined;
     },
     tree() {
-      return d3.tree().size([600, this.settings.width - 300]);
+      return d3.tree().size([1000, this.settings.width - 300]).separation(() => (this.settings.keyCellWidth));
     },
     getWith() {
       return this.$refs && this.$refs.cont ? this.$refs.cont.clientWidth : 800;
