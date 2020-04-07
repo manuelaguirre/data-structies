@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       margin: {
-        top: 20, right: 30, bottom: 30, left: 40,
+        top: 20, right: 50, bottom: 30, left: 200,
       },
       settings: {
         strokeColor: '#29B5FF',
@@ -74,8 +74,8 @@ export default {
     nodes() {
       if (this.root) {
         const nodes = this.root.descendants().map((d, i) => {
-          const x = `${200 + d.x}px`;
-          const y = `${parseInt(-1 * d.y + 30, 10)}px`;
+          const x = `${this.margin.left + d.x}px`;
+          const y = `${parseInt(-1 * d.y + this.margin.top, 10)}px`;
           return {
             id: `${i}`,
             r: 2.5,
@@ -100,10 +100,10 @@ export default {
       const that = this;
       if (this.root) {
         const links = this.root.descendants().slice(1).map((d, i) => {
-          const x = d.x + 200;
-          const parentx = d.parent.x + 200;
-          const y = parseInt(-1 * d.y + 30, 10);
-          const parenty = parseInt(-1 * d.parent.y + 30, 10);
+          const x = d.x + this.margin.left;
+          const parentx = d.parent.x + this.margin.left;
+          const y = parseInt(-1 * d.y + this.margin.top, 10);
+          const parenty = parseInt(-1 * d.parent.y + this.margin.top, 10);
           return {
             id: i,
             d: `M${x},${y}L${parentx},${parenty}`,
