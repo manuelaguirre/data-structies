@@ -21,17 +21,9 @@
       <DeleteInput
         @myEvent="deleteInputEvent"
       />
-      <HistoryButtons
-        :current="current"
-        :length="displayTreeList.length"
-        @historyEvents="changeCurrent"
-      />
     </div>
     <div class="visualier-cont">
-      <Visualizer
-        :structure-data="displayTreeList"
-        :current="current"
-      />
+      <Visualizer :structure-data="displayTree" />
     </div>
   </div>
 </template>
@@ -43,9 +35,10 @@ import btree from '../assets/implementations/btree';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
-import HistoryButtons from './shared/HistoryButtons.vue';
 
 const Tree = btree.create(2);
+
+
 const router = new Router();
 
 export default {
@@ -54,18 +47,15 @@ export default {
     InsertInput,
     DeleteInput,
     Visualizer,
-    HistoryButtons,
   },
   data() {
     return {
       bTree: new Tree(),
-      displayedTreeList: [],
-      current: 0,
     };
   },
   computed: {
-    displayTreeList() {
-      return this.displayedTreeList;
+    displayTree() {
+      return this.bTree.toJSON();
     },
   },
   methods: {
@@ -73,25 +63,18 @@ export default {
       router.back();
     },
     insertInputEvent(event) {
+      console.log('Insert: ', event);
       this.bTree.put(event, 'insert');
-      this.displayedTreeList.push(this.bTree.toJSON());
-      this.current = this.displayedTreeList.length - 1;
+      console.log(this.bTree.toString(true));
+      console.log(this.bTree.toJSON());
     },
     deleteInputEvent(event) {
+      console.log('Delete: ', event);
       this.bTree.del(event);
       this.bTree.print(0);
-      this.displayedTreeList.push(this.bTree.toJSON());
-      this.current = this.displayedTreeList.length - 1;
+      console.log(this.bTree.toJSON());
     },
-    changeCurrent(event) {
-      this.current += event;
-      if (this.current < 0) {
-        this.current = 0;
-      }
-      if (this.current > this.displayedTreeList.length - 1) {
-        this.current = this.displayedTreeList.length - 1;
-      }
-    },
+
   },
 };
 </script>

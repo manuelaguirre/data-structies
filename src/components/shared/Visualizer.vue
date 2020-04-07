@@ -67,8 +67,8 @@ export default {
   props: {
     width: { type: Number, default: 800 },
     height: { type: Number, default: 450 },
-    structureData: { type: Array, default: undefined },
-    current: { type: Number, default: 0 },
+    structureData: { type: Object, default: undefined }
+    ,
   },
 
   data() {
@@ -86,9 +86,8 @@ export default {
   },
   computed: {
     root() {
-      return this.structureData && this.structureData.length
-        ? this.tree(d3.hierarchy(this.structureData[this.current]))
-        : null;
+      const root = d3.hierarchy(this.structureData);
+      return this.tree(root);
     },
     nodes() {
       if (this.root) {
@@ -159,7 +158,6 @@ export default {
   .view-container {
     height: 100%;
     flex-direction: column;
-    align-items: center;
   }
   .svg {
     width: 100%;
