@@ -68,7 +68,7 @@ export default {
     width: { type: Number, default: 800 },
     height: { type: Number, default: 450 },
     structureData: { type: Array, default: undefined },
-    active: { type: Number, default: 0 },
+    current: { type: Number, default: 0 },
   },
 
   data() {
@@ -87,7 +87,7 @@ export default {
   computed: {
     root() {
       return this.structureData && this.structureData.length
-        ? this.tree(d3.hierarchy(this.structureData[this.active]))
+        ? this.tree(d3.hierarchy(this.structureData[this.current]))
         : null;
     },
     nodes() {

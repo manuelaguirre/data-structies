@@ -43,7 +43,7 @@ import btree from '../assets/implementations/btree';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
-import HistoryButtons from './shared/Arrows.vue';
+import HistoryButtons from './shared/HistoryButtons.vue';
 
 const Tree = btree.create(2);
 const router = new Router();
