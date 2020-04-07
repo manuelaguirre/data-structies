@@ -21,16 +21,16 @@
       <DeleteInput
         @myEvent="deleteInputEvent"
       />
-      <ArrowsComponent
-        :active="active"
+      <HistoryButtons
+        :current="current"
         :length="displayTreeList.length"
-        @myEvent="changeActive"
+        @historyEvents="changeCurrent"
       />
     </div>
     <div class="visualier-cont">
       <Visualizer
         :structure-data="displayTreeList"
-        :active="active"
+        :current="current"
       />
     </div>
   </div>
@@ -43,7 +43,7 @@ import btree from '../assets/implementations/btree';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
-import ArrowsComponent from './shared/Arrows.vue';
+import HistoryButtons from './shared/Arrows.vue';
 
 const Tree = btree.create(2);
 const router = new Router();
@@ -54,13 +54,13 @@ export default {
     InsertInput,
     DeleteInput,
     Visualizer,
-    ArrowsComponent,
+    HistoryButtons,
   },
   data() {
     return {
       bTree: new Tree(),
       displayedTreeList: [],
-      active: 0,
+      current: 0,
     };
   },
   computed: {
@@ -75,21 +75,21 @@ export default {
     insertInputEvent(event) {
       this.bTree.put(event, 'insert');
       this.displayedTreeList.push(this.bTree.toJSON());
-      this.active = this.displayedTreeList.length - 1;
+      this.current = this.displayedTreeList.length - 1;
     },
     deleteInputEvent(event) {
       this.bTree.del(event);
       this.bTree.print(0);
       this.displayedTreeList.push(this.bTree.toJSON());
-      this.active = this.displayedTreeList.length - 1;
+      this.current = this.displayedTreeList.length - 1;
     },
-    changeActive(event) {
-      this.active += event;
-      if (this.active < 0) {
-        this.active = 0;
+    changeCurrent(event) {
+      this.current += event;
+      if (this.current < 0) {
+        this.current = 0;
       }
-      if (this.active > this.displayedTreeList.length - 1) {
-        this.active = this.displayedTreeList.length - 1;
+      if (this.current > this.displayedTreeList.length - 1) {
+        this.current = this.displayedTreeList.length - 1;
       }
     },
   },

@@ -2,15 +2,15 @@
   <div class="flex button-container">
     <v-btn
       class="button"
-      :disabled="active <= 0"
-      @click="goBack"
+      :disabled="current <= 0"
+      @click="historyBack"
     >
       <strong>&lt;</strong>
     </v-btn>
     <v-btn
       class="button"
-      :disabled="active >= length - 1"
-      @click="goForward"
+      :disabled="current >= length - 1"
+      @click="historyForward"
     >
       <strong>&gt;</strong>
     </v-btn>
@@ -19,17 +19,17 @@
 
 <script>
 export default {
-  name: 'ArrowsComponent',
+  name: 'HistoryButtons',
   props: {
     length: { type: Number, default: 1 },
-    active: { type: Number, default: 0 },
+    current: { type: Number, default: 0 },
   },
   methods: {
-    goBack() {
-      this.$emit('myEvent', -1);
+    historyBack() {
+      this.$emit('historyEvents', -1);
     },
-    goForward() {
-      this.$emit('myEvent', 1);
+    historyForward() {
+      this.$emit('historyEvents', 1);
     },
   },
 };
