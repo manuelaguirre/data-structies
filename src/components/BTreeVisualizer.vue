@@ -21,9 +21,17 @@
       <DeleteInput
         @myEvent="deleteInputEvent"
       />
+      <ArrowsComponent
+        :active="active"
+        :length="displayTreeList.length"
+        @myEvent="changeActive"
+      />
     </div>
     <div class="visualier-cont">
-      <Visualizer :structure-data="displayTree" />
+      <Visualizer
+        :structure-data="displayTreeList"
+        :active="active"
+      />
     </div>
   </div>
 </template>
@@ -35,10 +43,9 @@ import btree from '../assets/implementations/btree';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
+import ArrowsComponent from './shared/Arrows.vue';
 
 const Tree = btree.create(2);
-
-
 const router = new Router();
 
 export default {
@@ -47,15 +54,18 @@ export default {
     InsertInput,
     DeleteInput,
     Visualizer,
+    ArrowsComponent,
   },
   data() {
     return {
       bTree: new Tree(),
+      displayedTreeList: [],
+      active: 0,
     };
   },
   computed: {
-    displayTree() {
-      return this.bTree.toJSON();
+    displayTreeList() {
+      return this.displayedTreeList;
     },
   },
   methods: {
@@ -63,18 +73,25 @@ export default {
       router.back();
     },
     insertInputEvent(event) {
-      console.log('Insert: ', event);
       this.bTree.put(event, 'insert');
-      console.log(this.bTree.toString(true));
-      console.log(this.bTree.toJSON());
+      this.displayedTreeList.push(this.bTree.toJSON());
+      this.active = this.displayedTreeList.length - 1;
     },
     deleteInputEvent(event) {
-      console.log('Delete: ', event);
       this.bTree.del(event);
       this.bTree.print(0);
-      console.log(this.bTree.toJSON());
+      this.displayedTreeList.push(this.bTree.toJSON());
+      this.active = this.displayedTreeList.length - 1;
     },
-
+    changeActive(event) {
+      this.active += event;
+      if (this.active < 0) {
+        this.active = 0;
+      }
+      if (this.active > this.displayedTreeList.length - 1) {
+        this.active = this.displayedTreeList.length - 1;
+      }
+    },
   },
 };
 </script>
