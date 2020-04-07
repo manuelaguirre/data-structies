@@ -26,19 +26,34 @@
           v-for="(node, index) in nodes"
           :key="node.id"
           class="node"
-          :style="node.style"
           @click="select(index, node)"
         >
-          <circle
-            :r="node.r"
-            :style="{'fill': '#bfbfbf'}"
-          />
+          <g
+            v-for="key in node.keys"
+            :key="key.text"
+            :style="node.style"
+          >
+            <rect
+              :width="settings.keyCellWidth"
+              :height="settings.keyCellHeight"
+              :x="key.position * settings.keyCellWidth - (settings.keyCellWidth/2) * (node.keys.length)"
+              :y="-1 * settings.keyCellHeight/2"
+              :style="node.rectStyle"
+            />
+            <text
+              :dx="key.position * settings.keyCellWidth - (settings.keyCellWidth/2) * (node.keys.length) + 10"
+              :dy="4"
+              :style="node.textStyle"
+            >
+              {{ key.text }}
+            </text>
+          </g>
           <text
             :dx="node.textpos.x"
             :dy="node.textpos.y"
             :style="node.textStyle"
-          >{{ node.text }}</text>
-        </g>
+          >{{ node.text }}</text></g>
+
       </transition-group>
     </svg>
   </div>
@@ -52,7 +67,8 @@ export default {
   props: {
     width: { type: Number, default: 800 },
     height: { type: Number, default: 450 },
-    structureData: { type: Object, default: undefined },
+    structureData: { type: Object, default: undefined }
+    ,
   },
 
   data() {
@@ -62,7 +78,9 @@ export default {
       },
       settings: {
         strokeColor: '#29B5FF',
-        width: 100,
+        width: '100',
+        keyCellWidth: 30,
+        keyCellHeight: 23,
       },
     };
   },
@@ -76,19 +94,28 @@ export default {
         const nodes = this.root.descendants().map((d, i) => {
           const x = `${this.margin.left + d.x}px`;
           const y = `${parseInt(-1 * d.y + this.margin.top, 10)}px`;
+
           return {
             id: `${i}`,
             r: 2.5,
-            text: d.data.leaves.keys.toString(),
+            keys: d.data.leaves.keys.map((k, ii) => ({
+              text: k.toString(),
+              position: ii,
+            })),
             style: {
               transform: `translate(${x},${y})`,
+            },
+            rectStyle: {
+              fill: 'white',
+              stroke: 'black',
+              strokeWidth: 2,
             },
             textpos: {
               x: d.children ? -8 : 8,
               y: 3,
             },
             textStyle: {
-              textAnchor: d.children ? 'end' : 'start',
+
             },
           };
         });
@@ -117,7 +144,7 @@ export default {
       return undefined;
     },
     tree() {
-      return d3.tree().size([600, this.settings.width - 300]);
+      return d3.tree().size([1000, this.settings.width - 300]).separation(() => (this.settings.keyCellWidth * 2));
     },
     getWith() {
       return this.$refs && this.$refs.cont ? this.$refs.cont.clientWidth : 800;
