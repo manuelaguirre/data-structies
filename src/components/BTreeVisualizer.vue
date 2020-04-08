@@ -49,7 +49,7 @@ const Tree = btree.create(2);
 const router = new Router();
 
 export default {
-  name: 'BTree',
+  name: 'BTreeVisualizer',
   components: {
     InsertInput,
     DeleteInput,
