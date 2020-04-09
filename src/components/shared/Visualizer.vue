@@ -97,11 +97,11 @@ export default {
           return {
             id: `${i}`,
             r: 2.5,
-            keys: d.data.leaves.keys.map((k, ii) => ({
+            keys: d.data.leaves.keys ? d.data.leaves.keys.map((k, ii) => ({
               text: k.toString(),
               position: ii,
               digits: k.toString().length,
-            })),
+            })) : null,
             style: {
               transform: `translate(${x},${y})`,
             },

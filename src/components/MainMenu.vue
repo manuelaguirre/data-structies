@@ -23,48 +23,17 @@ export default {
   props: {
   },
   data: () => ({
-    dataStructures: [{
-      name: 'Pablo Lescano',
-      imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
-      code: 'b-tree',
-    }, {
-      name: 'Pablo Lescano',
-      imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
-      code: 'pablo-lescano-1',
-    },
-    {
-      name: 'Pablo Lescano 2',
-      imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
-      code: 'pablo-lescano-2',
-    }, {
-      name: 'Pablo Lescano 3',
-      imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
-      code: 'pablo-lescano-3',
-    }, {
-      name: 'Pablo Lescano 4',
-      imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
-      code: 'pablo-lescano-4',
-    }, {
-      name: 'Pablo Lescano 5',
-      imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
-      code: 'pablo-lescano-5',
-    }, {
-      name: 'Pablo Lescano 6',
-      imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
-      code: 'pablo-lescano-6',
-    }, {
-      name: 'Pablo Lescano 7',
-      imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
-      code: 'pablo-lescano-7',
-    }, {
-      name: 'Pablo Lescano 8',
-      imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
-      code: 'pablo-lescano-8',
-    }, {
-      name: 'Pablo Lescano 9',
-      imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
-      code: 'pablo-lescano-9',
-    }],
+    dataStructures: [
+      {
+        name: 'B Tree',
+        imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+        code: 'b-tree',
+      }, {
+        name: 'Min Heap',
+        imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+        code: 'min-heap',
+      },
+    ],
   }),
 
 };

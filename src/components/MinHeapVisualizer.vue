@@ -1,6 +1,6 @@
 <template>
   <div
-    id="b-bTree-visualizer"
+    id="min-heap-visualizer"
     class="flex tree-container"
   >
     <v-btn
@@ -11,7 +11,7 @@
     </v-btn>
     <div class="title">
       <h1 class="name">
-        Structure: B Tree
+        Structure: Min Heap
       </h1>
     </div>
     <div class="flex buttons">
@@ -19,6 +19,7 @@
         @myEvent="insertInputEvent"
       />
       <DeleteInput
+        :onlypop="onlypop"
         @myEvent="deleteInputEvent"
       />
       <HistoryButtons
@@ -39,17 +40,16 @@
 <script>
 
 import Router from 'vue-router';
-import btree from '../assets/implementations/btree';
+import MinHeap from '../assets/implementations/minheap';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
 
-const Tree = btree.create(2);
 const router = new Router();
 
 export default {
-  name: 'BTreeVisualizer',
+  name: 'MinHeapVisualizer',
   components: {
     InsertInput,
     DeleteInput,
@@ -58,9 +58,10 @@ export default {
   },
   data() {
     return {
-      bTree: new Tree(),
+      minHeap: new MinHeap(),
       displayedTreeList: [],
       current: 0,
+      onlypop: true,
     };
   },
   computed: {
@@ -73,14 +74,13 @@ export default {
       router.back();
     },
     insertInputEvent(event) {
-      this.bTree.put(event, 'insert');
-      this.displayedTreeList.push(this.bTree.toJSON());
+      this.minHeap.insert(event);
+      this.displayedTreeList.push(this.minHeap.toJSON());
       this.current = this.displayedTreeList.length - 1;
     },
-    deleteInputEvent(event) {
-      this.bTree.del(event);
-      this.bTree.print(0);
-      this.displayedTreeList.push(this.bTree.toJSON());
+    deleteInputEvent() {
+      this.minHeap.remove();
+      this.displayedTreeList.push(this.minHeap.toJSON());
       this.current = this.displayedTreeList.length - 1;
     },
     changeCurrent(event) {
@@ -95,8 +95,7 @@ export default {
   },
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+=
 <style scoped>
   .name {
     font-size: 3rem;
