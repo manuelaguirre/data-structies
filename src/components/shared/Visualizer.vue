@@ -34,25 +34,23 @@
             :style="node.style"
           >
             <rect
-              :width="settings.keyCellWidth"
+              :width="settings.keyCellWidth + (key.digits - 1)*3"
               :height="settings.keyCellHeight"
-              :x="key.position * settings.keyCellWidth - (settings.keyCellWidth/2) * (node.keys.length)"
+              :x="key.position * (settings.keyCellWidth + (key.digits - 1)*3) -
+                ((settings.keyCellWidth + (key.digits - 1)*3)/2) * (node.keys.length)"
               :y="-1 * settings.keyCellHeight/2"
               :style="node.rectStyle"
             />
             <text
-              :dx="key.position * settings.keyCellWidth - (settings.keyCellWidth/2) * (node.keys.length) + 10"
+              :dx="key.position * settings.keyCellWidth -
+                (settings.keyCellWidth/2) * (node.keys.length) + 10 - (key.digits - 2)*4"
               :dy="4"
               :style="node.textStyle"
             >
               {{ key.text }}
             </text>
           </g>
-          <text
-            :dx="node.textpos.x"
-            :dy="node.textpos.y"
-            :style="node.textStyle"
-          >{{ node.text }}</text></g>
+        </g>
 
       </transition-group>
     </svg>
@@ -79,8 +77,8 @@ export default {
       settings: {
         strokeColor: '#29B5FF',
         width: '100',
-        keyCellWidth: 30,
-        keyCellHeight: 23,
+        keyCellWidth: 38,
+        keyCellHeight: 28,
       },
     };
   },
@@ -102,6 +100,7 @@ export default {
             keys: d.data.leaves.keys.map((k, ii) => ({
               text: k.toString(),
               position: ii,
+              digits: k.toString().length,
             })),
             style: {
               transform: `translate(${x},${y})`,
