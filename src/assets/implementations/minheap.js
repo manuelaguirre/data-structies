@@ -31,17 +31,17 @@ export default class MinHeap {
             leftChild = 2*i;
             righChild = leftChild + 1;
             // Get the smallest children
-            if (leftChild <= this.size && this.minheap[leftChild] > this.minheap[index]) {
+            if (leftChild <= this.size && this.minheap[leftChild] < this.minheap[index]) {
                 index = leftChild;
             }
-            if (righChild <= this.size && this.minheap[righChild] > this.minheap[index]) {
+            if (righChild <= this.size && this.minheap[righChild] < this.minheap[index]) {
                 index = righChild;
             }
             // Children are bigger than actual node
             if (index == i) {
                 return;
             }
-            swap(i, index);
+            this.swap(i, index);
             i = index;
         }
     }
@@ -56,6 +56,7 @@ export default class MinHeap {
         this.minheap[this.size] = null;
         this.size--;
         this.heapify(1);
+        this.minheap = this.minheap.slice(0, this.size + 1);
         return smallest;
     }
 
@@ -64,8 +65,8 @@ export default class MinHeap {
      * @param {number} node 
      */
     insert(node) {
-        this.minheap.push(node);
         this.size++;
+        this.minheap[this.size] = parseInt(node);
         let parent = Math.floor(this.size/2);
         let index = this.size;
         while (node < this.minheap[parent] && parent > 0) {
@@ -78,6 +79,9 @@ export default class MinHeap {
     toJSON() {
         const structure = {};
         structure['leaves'] = {};
+        if (this.size < 1) {
+            return structure;
+        }
         structure.leaves.keys = [this.minheap[1]];
         structure.children = this.appendChildren(1);
         return structure;
