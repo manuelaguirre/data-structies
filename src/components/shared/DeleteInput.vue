@@ -1,6 +1,7 @@
 <template>
   <div class="flex button-container">
     <v-text-field
+      v-if="!onlypop"
       color="error"
       label="Delete a Value"
       :value="deletedValue"
@@ -20,6 +21,9 @@
 <script>
 export default {
   name: 'DeleteInput',
+  props: {
+    onlypop: { type: Boolean },
+  },
   data() {
     return {
       deletedValue: '',
