@@ -39,8 +39,8 @@
               :x="key.position * (settings.keyCellWidth + (key.digits - 1)*3) -
                 ((settings.keyCellWidth + (key.digits - 1)*3)/2) * (node.keys.length)"
               :y="-1 * settings.keyCellHeight/2"
-              :style="node.rectStyle"
-            />
+              :style="highlighted.includes(key.text) ? settings.rectStyles.highlighted : settings.rectStyles.plain"
+            /> <rect />
             <text
               :dx="key.position * settings.keyCellWidth -
                 (settings.keyCellWidth/2) * (node.keys.length) + 10 - (key.digits - 2)*4"
@@ -63,6 +63,7 @@ import Sequence from '../../assets/visualizer/frame';
 
 export default {
   name: 'Visualizer',
+
   props: {
     width: { type: Number, default: 800 },
     height: { type: Number, default: 450 },
@@ -83,9 +84,23 @@ export default {
         width: '100',
         keyCellWidth: 38,
         keyCellHeight: 28,
+        rectStyles: {
+          plain: {
+            fill: 'white',
+            stroke: 'black',
+            strokeWidth: 2,
+          },
+          highlighted: {
+            fill: 'lightblue',
+            stroke: 'red',
+            strokeWidth: 2,
+          },
+        },
       },
+      highlighted: ['15', '67', '89'],
     };
   },
+
   computed: {
     root() {
       /** @type {Sequence} */
@@ -96,35 +111,7 @@ export default {
     },
     nodes() {
       if (this.root) {
-        const nodes = this.root.descendants().map((d, i) => {
-          const x = `${this.margin.left + d.x}px`;
-          const y = `${parseInt(-1 * d.y + this.margin.top, 10)}px`;
-
-          return {
-            id: `${i}`,
-            r: 2.5,
-            keys: d.data.leaves.keys ? d.data.leaves.keys.map((k, ii) => ({
-              text: k.toString(),
-              position: ii,
-              digits: k.toString().length,
-            })) : null,
-            style: {
-              transform: `translate(${x},${y})`,
-            },
-            rectStyle: {
-              fill: 'white',
-              stroke: 'black',
-              strokeWidth: 2,
-            },
-            textpos: {
-              x: d.children ? -8 : 8,
-              y: 3,
-            },
-            textStyle: {
-
-            },
-          };
-        });
+        const nodes = this.getNodes(this.root.descendants());
         return nodes;
       }
       return undefined;
@@ -154,6 +141,36 @@ export default {
     },
     getWith() {
       return this.$refs && this.$refs.cont ? this.$refs.cont.clientWidth : 800;
+    },
+  },
+
+  methods: {
+    highlight(key) {
+      this.highlighted.push(key);
+    },
+    getKeys(list) {
+      return list.map((k, ii) => (
+        {
+          text: k.toString(),
+          position: ii,
+          digits: k.toString().length,
+        }
+      )) || null;
+    },
+    getNodes(descendants) {
+      return descendants.map((d, i) => {
+        const x = `${this.margin.left + d.x}px`;
+        const y = `${this.margin.top - d.y}px`;
+        return {
+          id: i,
+          keys: this.getKeys(d.data.leaves.keys),
+          style: {
+            transform: `translate(${x},${y})`,
+          },
+          textStyle: {
+          },
+        };
+      });
     },
   },
 
