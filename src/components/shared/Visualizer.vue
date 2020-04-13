@@ -171,7 +171,6 @@ export default {
       return descendants.map((d, i) => {
         const x = `${this.margin.left + d.x}px`;
         const y = `${this.margin.top - d.y}px`;
-        console.log(this.getKeys(d.data.leaves.keys));
         return {
           id: i,
           keys: this.getKeys(d.data.leaves.keys),
