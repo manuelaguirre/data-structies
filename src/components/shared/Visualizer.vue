@@ -34,12 +34,11 @@
             :style="node.style"
           >
             <rect
-              :width="settings.keyCellWidth + (key.digits - 1)*3"
-              :height="settings.keyCellHeight"
-              :x="key.position * (settings.keyCellWidth + (key.digits - 1)*3) -
-                ((settings.keyCellWidth + (key.digits - 1)*3)/2) * (node.keys.length)"
-              :y="-1 * settings.keyCellHeight/2"
-              :style="highlighted.includes(key.text) ? settings.rectStyles.highlighted : settings.rectStyles.plain"
+              :width="key.svgParams.width"
+              :height="key.svgParams.height"
+              :x="key.svgParams.x"
+              :y="key.svgParams.y"
+              :style="key.svgParams.style"
             /> <rect />
             <text
               :dx="key.position * settings.keyCellWidth -
@@ -148,12 +147,23 @@ export default {
     highlight(key) {
       this.highlighted.push(key);
     },
-    getKeys(list) {
-      return list.map((k, ii) => (
+    getSVGParams(key, position, keys) {
+      return {
+        width: this.settings.keyCellWidth + (key.toString().length - 1) * 3,
+        height: this.settings.keyCellHeight,
+        x: position * (this.settings.keyCellWidth + (key.toString().length - 1) * 3)
+                - ((this.settings.keyCellWidth + (key.toString().length - 1) * 3) / 2) * (keys.length),
+        y: -this.settings.keyCellHeight / 2,
+        style: this.highlighted.includes(key.toString()) ? this.settings.rectStyles.highlighted : this.settings.rectStyles.plain,
+      };
+    },
+    getKeys(keys) {
+      return keys.map((key, ii, keyArray) => (
         {
-          text: k.toString(),
+          text: key.toString(),
           position: ii,
-          digits: k.toString().length,
+          digits: key.toString().length,
+          svgParams: this.getSVGParams(key, ii, keyArray),
         }
       )) || null;
     },
@@ -161,6 +171,7 @@ export default {
       return descendants.map((d, i) => {
         const x = `${this.margin.left + d.x}px`;
         const y = `${this.margin.top - d.y}px`;
+        console.log(this.getKeys(d.data.leaves.keys));
         return {
           id: i,
           keys: this.getKeys(d.data.leaves.keys),
