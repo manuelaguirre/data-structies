@@ -39,13 +39,12 @@
 <script>
 
 import Router from 'vue-router';
-import btree from '../assets/implementations/btree';
+import Btree from '../assets/implementations/btree';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
 
-const Tree = btree.create(2);
 const router = new Router();
 
 export default {
@@ -58,7 +57,7 @@ export default {
   },
   data() {
     return {
-      bTree: new Tree(),
+      bTree: new Btree(2),
       displayedTreeList: [],
       current: 0,
     };
