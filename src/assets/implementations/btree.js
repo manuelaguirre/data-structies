@@ -8,6 +8,7 @@ export default class Btree extends Tree {
     constructor(order) {
         super();
         this.order = order;
+        this.root.order = this.order;
     }
 
     /**
