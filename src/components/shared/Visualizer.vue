@@ -59,13 +59,17 @@
 
 <script>
 import * as d3 from 'd3';
+import Sequence from '../../assets/visualizer/frame';
 
 export default {
   name: 'Visualizer',
   props: {
     width: { type: Number, default: 800 },
     height: { type: Number, default: 450 },
-    structureData: { type: Array, default: undefined },
+    sequences: {
+      type: Array,
+      default: () => [new Sequence()],
+    },
     current: { type: Number, default: 0 },
   },
 
@@ -84,9 +88,11 @@ export default {
   },
   computed: {
     root() {
-      return this.structureData && this.structureData.length
-        ? this.tree(d3.hierarchy(this.structureData[this.current]))
-        : null;
+      /** @type {Sequence} */
+      const sequence = this.sequences.length ? this.sequences[this.current] : null;
+      // TODO: Show all the frames in a sequence
+      const root = sequence ? sequence.frames[sequence.frames.length - 1].tree : null;
+      return root ? this.tree(d3.hierarchy(root)) : null;
     },
     nodes() {
       if (this.root) {

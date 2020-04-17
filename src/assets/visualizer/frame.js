@@ -1,19 +1,24 @@
+import VisualizerTreeNode from "./visualizer-tree";
+
 /**
  * Constructs a new Tree.
  * @class A frame of some visualization for tree algorithms, containing the nodes and 
  * links to be highlighted.
  * @constructor
 */
-export default class Frame {
+export class Frame {
     constructor(tree) {
+        /** @type {VisualizerTreeNode} */
         this.tree = tree;
+        /** @type {string[]} */
         this.highlightedNodes = [];
+        /** @type {string[]} */
         this.highlightedLinks = [];
     }
 
     /**
      * Adds a nodeID to the highlights of the frame
-     *@param {number} nodeID   
+     * @param {number} nodeID   
      */
     addHighlightedNode(nodeID) {
         this.highlightedNodes.push(nodeID);
@@ -21,7 +26,7 @@ export default class Frame {
 
     /**
      * Adds a linkID to the highlights of the frame
-     *@param {number} linkID;   
+     * @param {number} linkID;   
      */
     addHighlightedLink(linkID){
         this.highlightedLinks.push(linkID)
@@ -35,12 +40,13 @@ export default class Frame {
  * @constructor
  */
 export default class Sequence {
-    constructor(){
+    constructor() {
+        /** @type {Frame[]} */
         this.frames = [];
     }
     /**
      * Adds a frame to the sequence
-     *@param {Frame} linkID;   
+     * @param {Frame} frame   
      */
     addFrame(frame){
         this.frames.push(frame)
