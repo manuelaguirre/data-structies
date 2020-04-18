@@ -23,13 +23,13 @@
       />
       <HistoryButtons
         :current="current"
-        :length="displayTreeList.length"
+        :length="sequences.length"
         @historyEvents="changeCurrent"
       />
     </div>
     <div class="visualier-cont">
       <Visualizer
-        :structure-data="displayTreeList"
+        :sequences="sequences"
         :current="current"
       />
     </div>
@@ -44,6 +44,8 @@ import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
+import Sequence, { Frame } from '../assets/visualizer/frame';
+
 
 const router = new Router();
 
@@ -58,14 +60,12 @@ export default {
   data() {
     return {
       bTree: new Btree(2),
-      displayedTreeList: [],
+      sequences: [],
       current: 0,
     };
   },
   computed: {
-    displayTreeList() {
-      return this.displayedTreeList;
-    },
+
   },
   methods: {
     goBack() {
@@ -73,14 +73,21 @@ export default {
     },
     insertInputEvent(event) {
       this.bTree.put(event, 'insert');
-      this.displayedTreeList.push(this.bTree.toJSON());
-      this.current = this.displayedTreeList.length - 1;
+      const sequence = new Sequence();
+      const frame = new Frame();
+      frame.tree = this.bTree.toJSON();
+      sequence.addFrame(frame);
+      this.sequences.push(sequence);
+      this.current = this.sequences.length - 1;
     },
     deleteInputEvent(event) {
       this.bTree.del(event);
-      this.bTree.print(0);
-      this.displayedTreeList.push(this.bTree.toJSON());
-      this.current = this.displayedTreeList.length - 1;
+      const sequence = new Sequence();
+      const frame = new Frame();
+      frame.tree = this.bTree.toJSON();
+      sequence.addFrame(frame);
+      this.sequences.push(sequence);
+      this.current = this.sequences.length - 1;
     },
     changeCurrent(event) {
       this.current += event;
