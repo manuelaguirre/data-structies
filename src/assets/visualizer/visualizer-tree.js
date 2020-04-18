@@ -21,8 +21,9 @@ export class VisualierNodeLeave {
 export default class VisualizerTreeNode {
   constructor() {
     /** @type {VisualierNodeLeave} */
-    this.leaves = null;
+    this.leaves = [];
     /** @type {VisualizerTreeNode[]} */
     this.children = [];
   }
+  
 }

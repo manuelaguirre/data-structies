@@ -1,3 +1,48 @@
+import VisualizerTreeNode, { VisualierNodeLeave } from "../visualizer/visualizer-tree";
+
+/**
+ * Concatenates multiple arrays into a new one.
+ * @param {...[Array]} var_args
+ * @returns {Array}
+ * @private
+ */
+function concat(var_args) {
+    // Array#concat behaves strangely for empty arrays, so...
+    var a = [];
+    for (var i=0; i < var_args.length; i++) {
+        Array.prototype.push.apply(a, var_args[i]);
+    }
+    return a;
+}
+/**
+ * Compares two numbers.
+ * @param {number} a
+ * @param {number} b
+ * @returns {number} -1 if a < b, 1 if a > b, 0 otherwise
+ * @expose
+ */
+function compare(numA, numB) {
+        let [a, b] = [+numA, +numB];
+        return a < b ? -1 : (a > b ? 1 : 0);
+        }
+
+/**
+ * Searches an array for the specified value.
+ * @param {Array} a
+ * @param {*} v
+ * @returns {number} Index or -1 if not found
+ * @private
+ */
+function asearch(a, v) {
+    // This is faster than Array#indexOf because it's raw. However, we
+    // cannot use binary search because nodes do not have a comparable
+    // key. If the compiler is smart, it will inline this.
+    for (var i=0; i<a.length; i++) {
+        if (a[i] === v) return i;
+    }
+    return -i;
+}
+
 /**
  * Constructs a new Tree.
  * @class A Tree.
@@ -5,19 +50,11 @@
 */
 export default class Tree {
     constructor() {
-        this.root = new TreeNode(this);
-        this.minOrder = 0;
         this.order = 0;
+        this.minOrder = this.order > 1 ? Math.floor(order/2) : 1;
+        this.root = new TreeNode(this);
     }
-
-    /**
-     * Compares two numbers.
-     * @param {number} a
-     * @param {number} b
-     * @returns {number} -1 if a < b, 1 if a > b, 0 otherwise
-     * @expose
-     */
-    compare(numA, numB) {}
+    
 
     /**
         * Inserts a key/value pair into the tree.
@@ -89,7 +126,7 @@ export default class Tree {
             var result = this.root.search(minKey);
             if (result.leaf) { // If the minimum key itself exists
                 ptr = result.leaf.parent; // set ptr to the containing node
-                index = this.asearch(ptr.leaves, result.leaf); // and start at its index
+                index = asearch(ptr.leaves, result.leaf); // and start at its index
             } else { // If the key does not exist
                 ptr = result.node; // set ptr to the insertion node
                 index = result.index; // and start at the insertion index (key > minKey)
@@ -97,7 +134,7 @@ export default class Tree {
                     if (ptr.parent instanceof Tree) {
                         return; // empty range
                     }
-                    index = this.asearch(ptr.parent.nodes, ptr);
+                    index = asearch(ptr.parent.nodes, ptr);
                     if (index >= ptr.parent.leaves.length) {
                         return; // empty range
                     }
@@ -107,7 +144,7 @@ export default class Tree {
         }
         // ptr/index now points at our first result
         while (true) {
-            if (maxKey !== null && this.compare(ptr.leaves[index].key, maxKey) > 0) {
+            if (maxKey !== null && compare(ptr.leaves[index].key, maxKey) > 0) {
                 break; // if there are no more keys less than maxKey
             }
             if (callback(ptr.leaves[index].key, ptr.leaves[index].value)) {
@@ -126,7 +163,7 @@ export default class Tree {
                     if ((ptr.parent instanceof Tree)) {
                         return;
                     }
-                    index = this.asearch(ptr.parent.nodes, ptr);
+                    index = asearch(ptr.parent.nodes, ptr);
                     ptr = ptr.parent;
                 } while (index >= ptr.leaves.length);
             }
@@ -180,7 +217,7 @@ export default class Tree {
         }
         // ptr/index now points at our first result
         while (true) {
-            if (minKey !== null && this.compare(ptr.leaves[index].key, minKey) < 0) {
+            if (minKey !== null && compare(ptr.leaves[index].key, minKey) < 0) {
                 break; // if there are no more keys bigger than minKey
             }
             if (callback(ptr.leaves[index].key, ptr.leaves[index].value)) {
@@ -241,7 +278,7 @@ export default class Tree {
 
     /**
      * Returns an object representation of this instance.
-     * @returns {string}
+     * @returns {Object}
      */
     toJSON() {
         return this.root.toJSON();
@@ -285,37 +322,6 @@ export class Leaf {
         return "" + this.key;
     }
 
-    /**
-     * Concatenates multiple arrays into a new one.
-     * @param {...[Array]} var_args
-     * @returns {Array}
-     * @private
-     */
-    concat(var_args) {
-        // Array#concat behaves strangely for empty arrays, so...
-        var a = [];
-        for (var i=0; i < var_args.length; i++) {
-            Array.prototype.push.apply(a, var_args[i]);
-        }
-        return a;
-    }
-
-    /**
-     * Searches an array for the specified value.
-     * @param {Array} a
-     * @param {*} v
-     * @returns {number} Index or -1 if not found
-     * @private
-     */
-    asearch(a, v) {
-        // This is faster than Array#indexOf because it's raw. However, we
-        // cannot use binary search because nodes do not have a comparable
-        // key. If the compiler is smart, it will inline this.
-        for (var i=0; i<a.length; i++) {
-            if (a[i] === v) return i;
-        }
-        return -i;
-    }
 }
 
 /**
@@ -324,6 +330,8 @@ export class Leaf {
  * @param {!(TreeNode|Tree)} parent Parent node
  * @param {Array.<!Leaf>=} leaves Leaf nodes
  * @param {Array.<TreeNode>=} nodes Child nodes
+ * @param {Number} order order of the Tree (useful for BTrees)
+
  * @constructor
  */
 export class TreeNode {
@@ -351,12 +359,16 @@ export class TreeNode {
         this.nodes.forEach(function(node) {
             if (node !== null) node.parent = this;
         }, this);
+
+          /**
+         * Order of the Tree
+         * @type {number}
+         */
+        this.order = parent.order;
+        this.minOrder = parent.minOrder;
     }
 
-    compare(numA, numB) {
-        let [a, b] = [+numA, +numB];
-        return a < b ? -1 : (a > b ? 1 : 0);
-    }
+    
 
     /**
      * Searches for the node that would contain the specified key.
@@ -364,10 +376,11 @@ export class TreeNode {
      * @returns {{leaf: !Leaf, index: number}|{node: !TreeNode, index: number}} Leaf if the key exists, else the insertion node
      */
     search(key) {
+        console.log(this.leaves.length)
         if (this.leaves.length > 0) {
             var a = this.leaves[0];
-            if (this.compare(a.key, key) === 0) return { leaf: a, index: 0 };
-            if (this.compare(key, a.key) < 0) {
+            if (compare(a.key, key) === 0) return { leaf: a, index: 0 };
+            if (compare(key, a.key) < 0) {
                 if (this.nodes[0] !== null) {
                     return this.nodes[0].search(key); // Left
                 }
@@ -375,8 +388,8 @@ export class TreeNode {
             }
             for (var i=1; i<this.leaves.length; i++) {
                 var b = this.leaves[i];
-                if (this.compare(b.key, key) === 0) return { leaf: b, index: i };
-                if (this.compare(key, b.key) < 0) {
+                if (compare(b.key, key) === 0) return { leaf: b, index: i };
+                if (compare(key, b.key) < 0) {
                     if (this.nodes[i] !== null) {
                         return this.nodes[i].search(key); // Inner
                     }
@@ -412,22 +425,23 @@ export class TreeNode {
      */
     put(key, value, overwrite) {
         var result = this.search(key);
-        if (result.leaf) {
-            if (typeof overwrite !== 'undefined' && !overwrite) {
-                return false;
+            if (result.leaf) {
+                if (typeof overwrite !== 'undefined' && !overwrite) {
+                    return false;
+                }
+                result.leaf.value = value;
+                return true;
+            } // Key already exists
+            /** @type {TreeNode} */
+            var node = result.node,
+                index = result.index;
+            node.leaves.splice(index, 0, new Leaf(node, key, value));
+            node.nodes.splice(index+1, 0, null);
+            if (node.leaves.length > this.order) { // Rebalance
+                node.split();
             }
-            result.leaf.value = value;
             return true;
-        } // Key already exists
-        var node = result.node,
-            index = result.index;
-        node.leaves.splice(index, 0, new Leaf(node, key, value));
-        node.nodes.splice(index+1, 0, null);
-        if (node.leaves.length > this.order) { // Rebalance
-            node.split();
-        }
-        return true;
-    };
+        };
 
     /**
      * Deletes a key from this node.
@@ -435,7 +449,9 @@ export class TreeNode {
      * @returns {boolean} true if the key has been deleted, false if the key does not exist
      */
     del(key) {
+        console.log(key);
         var result = this.search(key);
+        console.log(result,"result search del")
         if (!result.leaf) return false;
         var leaf = result.leaf,
             node = leaf.parent,
@@ -444,9 +460,12 @@ export class TreeNode {
         if (left === null) {
             node.leaves.splice(index, 1);
             node.nodes.splice(index, 1);
+            console.log(node, "node");
             node.balance();
+            console.log(node, "node balance");
         } else {
             var max = left.leaves[left.leaves.length-1];
+            console.log(max, "max")
             left.del(max.key);
             max.parent = node;
             node.leaves.splice(index, 1, max);
@@ -466,14 +485,14 @@ export class TreeNode {
             }
             return;
         }
-        if (this.leaves.length >= this.minOrder) {
+        if (this.leaves.length >=this.minOrder) {
             return;
         }
-        var index = this.asearch(this.parent.nodes, this),
+        var index = asearch(this.parent.nodes, this),
             left = index > 0 ? this.parent.nodes[index-1] : null,
             right = this.parent.nodes.length > index+1 ? this.parent.nodes[index+1] : null;
         var sep, leaf, rest;
-        if (right !== null && right.leaves.length > this.minOrder) {
+        if (right !== null && right.leaves.length >this.minOrder) {
             // Append the seperator from parent to this
             sep = this.parent.leaves[index];
             sep.parent = this;
@@ -486,7 +505,7 @@ export class TreeNode {
             rest = right.nodes.shift();
             if (rest !== null) rest.parent = this;
             this.nodes.push(rest);
-        } else if (left !== null && left.leaves.length > this.minOrder) {
+        } else if (left !== null && left.leaves.length >this.minOrder) {
             // Prepend the seperator from parent to this
             sep = this.parent.leaves[index-1];
             sep.parent = this;
@@ -504,10 +523,7 @@ export class TreeNode {
             if (right !== null) {
                 // Combine this + seperator from the parent + right
                 sep = this.parent.leaves[index];
-                subst = new TreeNode(
-                    this.parent,
-                    this.concat(this.leaves, [sep], right.leaves),
-                    this.concat(this.nodes, right.nodes));
+                subst = new TreeNode(this.parent, concat(this.leaves, [sep], right.leaves), concat(this.nodes, right.nodes));
                 // Remove the seperator from the parent
                 this.parent.leaves.splice(index, 1);
                 // And replace the nodes it seperated with subst
@@ -515,10 +531,7 @@ export class TreeNode {
             } else if (left !== null) {
                 // Combine left + seperator from parent + this
                 sep = this.parent.leaves[index-1];
-                subst = new TreeNode(
-                    this.parent, 
-                    this.concat(left.leaves, [sep], this.leaves),
-                    this.concat(left.nodes, this.nodes));
+                subst = new TreeNode(this.parent, concat(left.leaves, [sep], this.leaves), concat(left.nodes, this.nodes));
                 // Remove the seperator from the parent
                 this.parent.leaves.splice(index-1, 1);
                 // And replace the nodes it seperated with subst
@@ -542,13 +555,13 @@ export class TreeNode {
         leaf.parent = this;
         rest.parent = this;
         var a = this.leaves[0];
-        if (this.compare(leaf.key, a.key) < 0) {
+        if (compare(leaf.key, a.key) < 0) {
             this.leaves.unshift(leaf);
             this.nodes.splice(1, 0, rest);
         } else {
             for (var i=1; i<this.leaves.length; i++) {
                 var b = this.leaves[i];
-                if (this.compare(leaf.key, b.key) < 0) {
+                if (compare(leaf.key, b.key) < 0) {
                     this.leaves.splice(i, 0, leaf);
                     this.nodes.splice(i+1, 0, rest);
                     break;
@@ -619,24 +632,27 @@ export class TreeNode {
     * Returns the node's entire subtree as a Javascript Object, including keys.
     * @returns {Object}
     */
-    toJSON() {
-        var val = [];
-        for (var i=0; i<this.leaves.length; i++) {
-            val.push(this.leaves[i].key);
-        }            
-        var nodeArray = [];
-        if (this.nodes[0] !== null) nodeArray.push(this.nodes[0]);
-        for (i=0; i<=this.leaves.length-1; i++) {
-            if (this.nodes[i+1] !== null) nodeArray.push(this.nodes[i+1]);               
-        }
-        var result = {};
-        result.leaves = {};
-        result.leaves.keys = val;
+   toJSON() {
+    
+    var val = [];
+    for (var i=0; i<this.leaves.length; i++) {
+        val.push(this.leaves[i].key);
+    }            
+    console.log("leaves length",this.leaves.length);
+    console.log(this.nodes.length)
 
-        result.children = nodeArray.map(n=>n.toJSON()) ;
-
-        return result;           
+    var nodeArray = [];
+    if (this.nodes[0] !== null) nodeArray.push(this.nodes[0]);
+    for (i=0; i<=this.leaves.length-1; i++) {
+        if (this.nodes[i+1] !== null) nodeArray.push(this.nodes[i+1]);               
     }
+    var structure = {};
+    structure.leaves = {};
+    structure.leaves.keys = val;
+    structure.children = nodeArray.map(n=>n.toJSON()) ;
+
+    return structure;           
+}
 }
 
 /**
