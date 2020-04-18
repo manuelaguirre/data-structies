@@ -75,6 +75,7 @@ export default {
       this.bTree.put(event, 'insert');
       const sequence = new Sequence();
       const frame = new Frame();
+      console.log(this.bTree.toJSON());
       frame.tree = this.bTree.toJSON();
       sequence.addFrame(frame);
       this.sequences.push(sequence);
@@ -84,6 +85,7 @@ export default {
       this.bTree.del(event);
       const sequence = new Sequence();
       const frame = new Frame();
+      console.log(this.bTree.toJSON());
       frame.tree = this.bTree.toJSON();
       sequence.addFrame(frame);
       this.sequences.push(sequence);
