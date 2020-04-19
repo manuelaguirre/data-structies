@@ -18,4 +18,12 @@ describe("VisualizerTreeNode",()=>{
            VisualizerTreeNode
        );
     })
+    test("highlights and deemphasizes existing keys", ()=>{
+        root.leaves.highlight(0);
+        root.leaves.deEmphasize(1);
+        expect(root.leaves.keys).toEqual(
+            [{key:1, highlighted: true},
+                {key:2, highlighted: false}]
+        )
+    })
 })
