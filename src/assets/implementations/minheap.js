@@ -1,4 +1,4 @@
-import VisualizerTreeNode, { VisualierNodeLeave } from "../visualizer/visualizer-tree";
+import VisualizerTreeNode, { VisualizerNodeLeaf } from "../visualizer/visualizer-tree";
 
 export default class MinHeap {
     constructor () {
@@ -87,7 +87,7 @@ export default class MinHeap {
         if (this.size < 1) {
             return structure;
         }
-        structure.leaves = new VisualierNodeLeave();
+        structure.leaves = new VisualizerNodeLeaf();
         structure.leaves.addKey(this.minheap[1]);
         structure.children = this.appendChildren(1);
         return structure;
@@ -103,14 +103,14 @@ export default class MinHeap {
         const children = [];
         if (2*i <= this.size) {
             const node = new VisualizerTreeNode();
-            node.leaves = new VisualierNodeLeave();
+            node.leaves = new VisualizerNodeLeaf();
             node.leaves.addKey(this.minheap[2*i]);
             node.children = this.appendChildren(2*i);
             children.push(node);
         }
         if (2*i + 1 <= this.size) {
             const node = new VisualizerTreeNode();
-            node.leaves = new VisualierNodeLeave();
+            node.leaves = new VisualizerNodeLeaf();
             node.leaves.addKey(this.minheap[2*i + 1]);
             node.children = this.appendChildren(2*i + 1);
             children.push(node);

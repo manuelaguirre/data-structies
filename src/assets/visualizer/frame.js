@@ -10,30 +10,8 @@ export class Frame {
     constructor(tree) {
         /** @type {VisualizerTreeNode} */
         this.tree = tree;
-        /** @type {string[]} */
-        this.highlightedNodes = [];
-        /** @type {string[]} */
-        this.highlightedLinks = [];
     }
-
-    /**
-     * Adds a nodeID to the highlights of the frame
-     * @param {number} nodeID   
-     */
-    addHighlightedNode(nodeID) {
-        this.highlightedNodes.push(nodeID);
-    }
-
-    /**
-     * Adds a linkID to the highlights of the frame
-     * @param {number} linkID;   
-     */
-    addHighlightedLink(linkID){
-        this.highlightedLinks.push(linkID)
-    }
-
 }
-
 /**
  * Constructs a new Tree.
  * @class A collection of frames for visualizing tree algorithms
