@@ -376,7 +376,6 @@ export class TreeNode {
      * @returns {{leaf: !Leaf, index: number}|{node: !TreeNode, index: number}} Leaf if the key exists, else the insertion node
      */
     search(key) {
-        console.log(this.leaves.length)
         if (this.leaves.length > 0) {
             var a = this.leaves[0];
             if (compare(a.key, key) === 0) return { leaf: a, index: 0 };
@@ -449,9 +448,7 @@ export class TreeNode {
      * @returns {boolean} true if the key has been deleted, false if the key does not exist
      */
     del(key) {
-        console.log(key);
         var result = this.search(key);
-        console.log(result,"result search del")
         if (!result.leaf) return false;
         var leaf = result.leaf,
             node = leaf.parent,
@@ -460,12 +457,9 @@ export class TreeNode {
         if (left === null) {
             node.leaves.splice(index, 1);
             node.nodes.splice(index, 1);
-            console.log(node, "node");
             node.balance();
-            console.log(node, "node balance");
         } else {
             var max = left.leaves[left.leaves.length-1];
-            console.log(max, "max")
             left.del(max.key);
             max.parent = node;
             node.leaves.splice(index, 1, max);
@@ -638,8 +632,6 @@ export class TreeNode {
     for (var i=0; i<this.leaves.length; i++) {
         val.push(this.leaves[i].key);
     }            
-    console.log("leaves length",this.leaves.length);
-    console.log(this.nodes.length)
 
     var nodeArray = [];
     if (this.nodes[0] !== null) nodeArray.push(this.nodes[0]);
@@ -663,16 +655,13 @@ export class TreeNode {
 export function validate(node) { // This function will be stripped by the compiler
     if ((node instanceof Tree)) return;
     if (node.leaves.length+1 != node.nodes.length) {
-        console.log("ERROR: Illegal leaf/node count in "+node+": "+node.leaves.length+"/"+node.nodes.length);
     }
     for (var i=0; i<node.leaves.length; i++) {
         if (!node.leaves[i]) {
-            console.log("ERROR: Illegal leaf in "+node+" at "+i+": "+node.leaves[i]);
         }
     }
     for (i=0; i<node.nodes.length; i++) {
         if (typeof node.nodes[i] == 'undefined') {
-            console.log("ERROR: Illegal node in "+node+" at "+i+": undefined");
         }
     }
 }
