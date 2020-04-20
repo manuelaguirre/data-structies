@@ -24,13 +24,13 @@
       />
       <HistoryButtons
         :current="current"
-        :length="displayTreeList.length"
+        :length="sequences.length"
         @historyEvents="changeCurrent"
       />
     </div>
     <div class="visualier-cont">
       <Visualizer
-        :structure-data="displayTreeList"
+        :sequences="sequences"
         :current="current"
       />
     </div>
@@ -45,6 +45,7 @@ import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
+import Sequence, { Frame } from '../assets/visualizer/frame';
 
 const router = new Router();
 
@@ -59,14 +60,15 @@ export default {
   data() {
     return {
       minHeap: new MinHeap(),
-      displayedTreeList: [],
+      /** @type {Sequence[]} */
+      sequencesList: [],
       current: 0,
       onlypop: true,
     };
   },
   computed: {
-    displayTreeList() {
-      return this.displayedTreeList;
+    sequences() {
+      return this.sequencesList;
     },
   },
   methods: {
@@ -74,22 +76,32 @@ export default {
       router.back();
     },
     insertInputEvent(event) {
+      // TODO: insert and remove action return have to produce more than one frame
       this.minHeap.insert(event);
-      this.displayedTreeList.push(this.minHeap.toJSON());
-      this.current = this.displayedTreeList.length - 1;
+      const sequence = new Sequence();
+      const frame = new Frame();
+      frame.tree = this.minHeap.toJSON();
+      sequence.addFrame(frame);
+      this.sequencesList.push(sequence);
+      this.current = this.sequencesList.length - 1;
     },
     deleteInputEvent() {
+      // TODO: insert and remove action return have to produce more than one frame
       this.minHeap.remove();
-      this.displayedTreeList.push(this.minHeap.toJSON());
-      this.current = this.displayedTreeList.length - 1;
+      const sequence = new Sequence();
+      const frame = new Frame();
+      frame.tree = this.minHeap.toJSON();
+      sequence.addFrame(frame);
+      this.sequencesList.push(sequence);
+      this.current = this.sequencesList.length - 1;
     },
     changeCurrent(event) {
       this.current += event;
       if (this.current < 0) {
         this.current = 0;
       }
-      if (this.current > this.displayedTreeList.length - 1) {
-        this.current = this.displayedTreeList.length - 1;
+      if (this.current > this.sequencesList.length - 1) {
+        this.current = this.sequencesList.length - 1;
       }
     },
   },

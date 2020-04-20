@@ -1,3 +1,5 @@
+import VisualizerTreeNode, { VisualizerNodeLeaf } from "../visualizer/visualizer-tree";
+
 export default class MinHeap {
     constructor () {
         // Always first node is null [null, 1, 4, 5 ....]
@@ -76,30 +78,40 @@ export default class MinHeap {
         }
     }
 
+    /**
+     * Create a VisualizerTreeNode
+     * @return {VisualizerTreeNode}
+     */
     toJSON() {
-        const structure = {};
-        structure['leaves'] = {};
+        const structure = new VisualizerTreeNode();
         if (this.size < 1) {
             return structure;
         }
-        structure.leaves.keys = [this.minheap[1]];
+        structure.leaves = new VisualizerNodeLeaf();
+        structure.leaves.addKey(this.minheap[1]);
         structure.children = this.appendChildren(1);
         return structure;
     }
 
+    /**
+     * Return all the children for a given node
+     * @param {number} i 
+     * @returns {VisualizerTreeNode[]}
+     */
     appendChildren(i) {
+        /** @type {VisualizerTreeNode[]} */
         const children = [];
         if (2*i <= this.size) {
-            const node = {};
-            node['leaves'] = {};
-            node.leaves.keys = [this.minheap[2*i]];
+            const node = new VisualizerTreeNode();
+            node.leaves = new VisualizerNodeLeaf();
+            node.leaves.addKey(this.minheap[2*i]);
             node.children = this.appendChildren(2*i);
             children.push(node);
         }
         if (2*i + 1 <= this.size) {
-            const node = {};
-            node['leaves'] = {};
-            node.leaves.keys = [this.minheap[2*i + 1]];
+            const node = new VisualizerTreeNode();
+            node.leaves = new VisualizerNodeLeaf();
+            node.leaves.addKey(this.minheap[2*i + 1]);
             node.children = this.appendChildren(2*i + 1);
             children.push(node);
         }
