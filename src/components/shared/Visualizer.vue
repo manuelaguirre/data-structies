@@ -83,6 +83,11 @@ export default {
         width: '100',
         keyCellWidth: 38,
         keyCellHeight: 28,
+        linkStyles: {
+          plain: {
+            strokeColor: '#29B5FF',
+          },
+        },
         rectStyles: {
           plain: {
             fill: 'white',
@@ -96,7 +101,6 @@ export default {
           },
         },
       },
-      highlighted: ['15', '67', '89'],
     };
   },
 
@@ -134,25 +138,23 @@ export default {
   },
 
   methods: {
-    highlight(key) {
-      this.highlighted.push(key);
-    },
     getSVGParams(key, position, keys) {
       return {
-        width: this.settings.keyCellWidth + (key.toString().length - 1) * 3,
+        width: this.settings.keyCellWidth + (key.value.toString().length - 1) * 3,
         height: this.settings.keyCellHeight,
-        x: position * (this.settings.keyCellWidth + (key.toString().length - 1) * 3)
-                - ((this.settings.keyCellWidth + (key.toString().length - 1) * 3) / 2) * (keys.length),
+        x: position * (this.settings.keyCellWidth + (key.value.toString().length - 1) * 3)
+                - ((this.settings.keyCellWidth + (key.value.toString().length - 1) * 3) / 2) * (keys.length),
         y: -this.settings.keyCellHeight / 2,
-        style: this.highlighted.includes(key.toString()) ? this.settings.rectStyles.highlighted : this.settings.rectStyles.plain,
+        style: key.value.highlighted ? this.settings.rectStyles.highlighted : this.settings.rectStyles.plain,
       };
     },
     getKeys(keys) {
       return keys.map((key, ii, keyArray) => (
         {
-          text: key.toString(),
+          text: key.value.toString(),
           position: ii,
-          digits: key.toString().length,
+          highlighted: key.highlighted,
+          digits: key.value.toString().length,
           svgParams: this.getSVGParams(key, ii, keyArray),
         }
       )) || null;
@@ -178,14 +180,17 @@ export default {
         const parentx = this.margin.left + d.parent.x;
         const y = this.margin.top - d.y;
         const parenty = this.margin.top - d.parent.y;
+        const highlighted = this.hasHighlightedKeys(d.parent.data.leaves.keys) && this.hasHighlightedKeys(d.data.leaves.keys);
         return {
           id: i,
           d: `M${x},${y}L${parentx},${parenty}`,
-          style: {
-            stroke: this.settings.strokeColor,
-          },
+          style: highlighted ? this.settings.linkStyles.highlighted : this.settings.linkStyles.plain,
         };
       });
+    },
+    hasHighlightedKeys(leavesArray) {
+      const isHighlighted = (key) => key.highlighted;
+      return leavesArray.some(isHighlighted);
     },
   },
 

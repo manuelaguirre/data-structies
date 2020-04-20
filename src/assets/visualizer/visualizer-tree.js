@@ -12,8 +12,8 @@ export class VisualizerNodeLeaf {
    * @param {number} key key to be added
    * @param {Boolean} highlighted true will highlight this key
    */
-  addKey(key, highlighted=false) {
-    this.keys.push({key, highlighted});
+  addKey(value, highlighted=false) {
+    this.keys.push({value, highlighted});
   }
   /**
    * Highlights a key by its index in the leaf
