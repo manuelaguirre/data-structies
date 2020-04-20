@@ -16,15 +16,18 @@
     </div>
     <div class="flex buttons">
       <InsertInput
+        :disabled="isDisabled"
         @myEvent="insertInputEvent"
       />
       <DeleteInput
         :onlypop="onlypop"
+        :disabled="isDisabled"
         @myEvent="deleteInputEvent"
       />
       <HistoryButtons
         :current="current"
         :length="sequences.length"
+        :disabled="isDisabled"
         @historyEvents="changeCurrent"
       />
     </div>
@@ -45,7 +48,7 @@ import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
-import Sequence, { Frame } from '../assets/visualizer/frame';
+import Sequence from '../assets/visualizer/frame';
 
 const router = new Router();
 
@@ -64,6 +67,7 @@ export default {
       sequencesList: [],
       current: 0,
       onlypop: true,
+      isDisabled: false,
     };
   },
   computed: {
@@ -76,24 +80,26 @@ export default {
       router.back();
     },
     insertInputEvent(event) {
-      // TODO: insert and remove action return have to produce more than one frame
-      this.minHeap.insert(event);
-      const sequence = new Sequence();
-      const frame = new Frame();
-      frame.tree = this.minHeap.toJSON();
-      sequence.addFrame(frame);
-      this.sequencesList.push(sequence);
-      this.current = this.sequencesList.length - 1;
+      this.addSequenceAsync(this.minHeap.insert(event));
     },
     deleteInputEvent() {
-      // TODO: insert and remove action return have to produce more than one frame
-      this.minHeap.remove();
-      const sequence = new Sequence();
-      const frame = new Frame();
-      frame.tree = this.minHeap.toJSON();
-      sequence.addFrame(frame);
-      this.sequencesList.push(sequence);
+      this.addSequenceAsync(this.minHeap.remove());
+    },
+    addSequenceAsync(frames) {
+      this.isDisabled = true;
+      const newSequence = new Sequence();
+      newSequence.addFrame(frames.frames[0]);
+      this.sequencesList.push(newSequence);
       this.current = this.sequencesList.length - 1;
+      for (let i = 1; i < frames.frames.length; i += 1) {
+        setTimeout(() => {
+          newSequence.addFrame(frames.frames[i]);
+          if (i === frames.frames.length - 1) {
+            this.isDisabled = false;
+          }
+          this.sequencesList = Object.assign(this.sequencesList);
+        }, i * 1000);
+      }
     },
     changeCurrent(event) {
       this.current += event;

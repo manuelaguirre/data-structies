@@ -2,14 +2,14 @@
   <div class="flex button-container">
     <v-btn
       class="button"
-      :disabled="current <= 0"
+      :disabled="current <= 0 || disabled"
       @click="historyBack"
     >
       <strong>&lt;</strong>
     </v-btn>
     <v-btn
       class="button"
-      :disabled="current >= length - 1"
+      :disabled="current >= length - 1 || disabled"
       @click="historyForward"
     >
       <strong>&gt;</strong>
@@ -23,6 +23,7 @@ export default {
   props: {
     length: { type: Number, default: 1 },
     current: { type: Number, default: 0 },
+    disabled: { type: Boolean },
   },
   methods: {
     historyBack() {
