@@ -11,6 +11,7 @@
     <v-btn
       color="error"
       class="button"
+      :disabled="disabled"
       @click="deleteValue"
     >
       Delete
@@ -23,6 +24,7 @@ export default {
   name: 'DeleteInput',
   props: {
     onlypop: { type: Boolean },
+    disabled: { type: Boolean },
   },
   data() {
     return {
