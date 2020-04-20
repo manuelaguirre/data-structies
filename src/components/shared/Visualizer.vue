@@ -101,6 +101,9 @@ export default {
   },
 
   computed: {
+
+    //
+
     root() {
       /** @type {Sequence} */
       const sequence = this.sequences.length ? this.sequences[this.current] : null;
@@ -116,21 +119,8 @@ export default {
       return undefined;
     },
     links() {
-      const that = this;
       if (this.root) {
-        const links = this.root.descendants().slice(1).map((d, i) => {
-          const x = d.x + this.margin.left;
-          const parentx = d.parent.x + this.margin.left;
-          const y = parseInt(-1 * d.y + this.margin.top, 10);
-          const parenty = parseInt(-1 * d.parent.y + this.margin.top, 10);
-          return {
-            id: i,
-            d: `M${x},${y}L${parentx},${parenty}`,
-            style: {
-              stroke: that.settings.strokeColor,
-            },
-          };
-        });
+        const links = this.getLinks(this.root.descendants());
         return links;
       }
       return undefined;
@@ -178,6 +168,21 @@ export default {
             transform: `translate(${x},${y})`,
           },
           textStyle: {
+          },
+        };
+      });
+    },
+    getLinks(descendants) {
+      return descendants.slice(1).map((d, i) => {
+        const x = d.x + this.margin.left;
+        const parentx = this.margin.left + d.parent.x;
+        const y = this.margin.top - d.y;
+        const parenty = this.margin.top - d.parent.y;
+        return {
+          id: i,
+          d: `M${x},${y}L${parentx},${parenty}`,
+          style: {
+            stroke: this.settings.strokeColor,
           },
         };
       });
