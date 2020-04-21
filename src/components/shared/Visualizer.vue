@@ -85,7 +85,10 @@ export default {
         keyCellHeight: 28,
         linkStyles: {
           plain: {
-            strokeColor: '#29B5FF',
+            stroke: 'black',
+          },
+          highlighted: {
+            stroke: 'red',
           },
         },
         rectStyles: {
@@ -145,7 +148,7 @@ export default {
         x: position * (this.settings.keyCellWidth + (key.value.toString().length - 1) * 3)
                 - ((this.settings.keyCellWidth + (key.value.toString().length - 1) * 3) / 2) * (keys.length),
         y: -this.settings.keyCellHeight / 2,
-        style: key.value.highlighted ? this.settings.rectStyles.highlighted : this.settings.rectStyles.plain,
+        style: key.highlighted ? this.settings.rectStyles.highlighted : this.settings.rectStyles.plain,
       };
     },
     getKeys(keys) {
@@ -180,17 +183,13 @@ export default {
         const parentx = this.margin.left + d.parent.x;
         const y = this.margin.top - d.y;
         const parenty = this.margin.top - d.parent.y;
-        const highlighted = this.hasHighlightedKeys(d.parent.data.leaves.keys) && this.hasHighlightedKeys(d.data.leaves.keys);
+        const highlighted = d.data.leaves.keys.some((key) => key.highlighted) && d.parent.data.leaves.keys.some((key) => key.highlighted);
         return {
           id: i,
           d: `M${x},${y}L${parentx},${parenty}`,
           style: highlighted ? this.settings.linkStyles.highlighted : this.settings.linkStyles.plain,
         };
       });
-    },
-    hasHighlightedKeys(leavesArray) {
-      const isHighlighted = (key) => key.highlighted;
-      return leavesArray.some(isHighlighted);
     },
   },
 
