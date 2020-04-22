@@ -108,9 +108,6 @@ export default {
   },
 
   computed: {
-
-    //
-
     root() {
       /** @type {Sequence} */
       const sequence = this.sequences.length ? this.sequences[this.current] : null;
@@ -171,8 +168,6 @@ export default {
           keys: this.getKeys(d.data.leaves.keys),
           style: {
             transform: `translate(${x},${y})`,
-          },
-          textStyle: {
           },
         };
       });
