@@ -4,12 +4,14 @@
       class="text-field"
       label="Insert a Value"
       :value="insertedValue"
+      :disabled="disabled"
       @input="insertedValue = $event"
       @keyup.enter="insertValue"
     />
     <v-btn
       class="button"
       color="primary"
+      :disabled="disabled"
       @click="insertValue"
     >
       Insert
@@ -20,6 +22,9 @@
 <script>
 export default {
   name: 'InsertInput',
+  props: {
+    disabled: { type: Boolean },
+  },
   data() {
     return {
       insertedValue: '',
@@ -27,8 +32,10 @@ export default {
   },
   methods: {
     insertValue() {
-      this.$emit('myEvent', this.insertedValue);
-      this.insertedValue = '';
+      if (this.insertedValue !== '') {
+        this.$emit('myEvent', this.insertedValue);
+        this.insertedValue = '';
+      }
     },
   },
 };
