@@ -28,17 +28,17 @@ export default class MinHeap {
      * @param {number} i 
      */
     heapify(i, sequence) {
-        let index, leftChild, righChild;
+        let index, leftChild, rightChild;
         while(i < this.size) {
             index = i;
             leftChild = 2*i;
-            righChild = leftChild + 1;
+            rightChild = leftChild + 1;
             // Get the smallest children
             if (leftChild <= this.size && this.minheap[leftChild] < this.minheap[index]) {
                 index = leftChild;
             }
-            if (righChild <= this.size && this.minheap[righChild] < this.minheap[index]) {
-                index = righChild;
+            if (rightChild <= this.size && this.minheap[rightChild] < this.minheap[index]) {
+                index = rightChild;
             }
             // Children are bigger than actual node
             if (index == i) {
