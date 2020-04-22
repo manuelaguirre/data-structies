@@ -1,4 +1,5 @@
 import VisualizerTreeNode, { VisualizerNodeLeaf } from "../visualizer/visualizer-tree";
+import Sequence, { Frame } from "../visualizer/frame";
 
 export class BTreeNode {
     constructor(isLeaf) {
@@ -14,6 +15,11 @@ export class BTreeNode {
          * @type {BTreeNode[]}
         */
         this.children = [];
+        /**
+         * Reference to the tree its belong.
+         * @type {BTree}
+         */
+        this.tree = null;
     }
 
     /**
@@ -25,17 +31,29 @@ export class BTreeNode {
     }
 
     /**
-     * Add value
+     * Add value. Add frames to the given sequence
      * @param {number} value 
+     * @param {Sequence} sequence 
      * @param {number} pos 
      */
-    addValue(value) {
-        if (value) {
-            let pos = 0;
-            while (pos < this.n && this.values[pos] < value) {
-                pos++;
+    addValue(value, sequence) {
+        if (!value) {
+            return;
+        }
+        let pos = 0;
+        // Add frame fot each value compared
+        if (this.n > 0 && sequence) {
+            sequence.addFrame(new Frame(this.tree.toJSON(this.tree.root, [this.values[pos]])));
+        }
+        while (pos < this.n && this.values[pos] < value) {
+            pos++;
+            if (pos < this.n && sequence) {
+                sequence.addFrame(new Frame(this.tree.toJSON(this.tree.root, [this.values[pos]])));
             }
-            this.values.splice(pos, 0, value);
+        }
+        this.values.splice(pos, 0, value);
+        if (sequence) {
+            sequence.addFrame(new Frame(this.tree.toJSON(this.tree.root, [this.values[pos]])));
         }
     }
 
@@ -85,20 +103,31 @@ export default class BTree {
     }
 
     /**
-     * Insert a new value in the tree
-     * @param {number} value 
+     * Insert a new value in the tree O(log N)
+     * Return Sequence with Frame array to visualize the operation
+     * @param {number} value
+     * @returns {Sequence}
      */
     insert(value) {
+        const sequence = new Sequence();
         const actual = this.root;
+        if (actual.n > 1) {
+            // Insert frame with the whole node highlighted
+            sequence.addFrame(new Frame(this.toJSON(this.root, actual.values)));
+        }
         if (actual.n === this.order + 1) {
             const temp = new BTreeNode(false);
+            temp.tree = this.root.tree;
             this.root = temp;
-            temp.addChild(actual, temp.children.length - 1);
-            this.split(actual, temp, 1);
-            this.insertNonFull(temp, parseInt(value));
+            temp.addChild(actual, 0);
+            this.split(actual, temp, 1, sequence);
+            this.insertNonFull(temp, parseInt(value), sequence);
         } else {
-            this.insertNonFull(actual, parseInt(value));
+            this.insertNonFull(actual, parseInt(value), sequence);
         }
+        // Insert last fram with no highlight
+        sequence.addFrame(new Frame(this.toJSON(this.root)));
+        return sequence;
     };
     
     /**
@@ -106,9 +135,11 @@ export default class BTree {
      * @param {BTreeNode} child 
      * @param {BTreeNode} parent 
      * @param {number} pos 
+     * @param {Sequence} sequence 
      */
-    split(child, parent, pos) {
+    split(child, parent, pos, sequence) {
         const newChild = new BTreeNode(child.leaf);
+        newChild.tree = this.root.tree;
         // Create a new child for the parent
         // Trasspass values from the old child to the new
         for (let k = 1; k < this.order; k++) {
@@ -123,30 +154,45 @@ export default class BTree {
         // Add new child to the parent
         parent.addChild(newChild, pos);
         // Add traspassed value to parent
-        parent.addValue(child.removeValue(this.order - 1));
+        const parentValue = child.removeValue(this.order - 1);
+        console.log(parentValue);
+        parent.addValue(parentValue);
+        // Highlight the splitted nodes
+        const values = [];
+        values.push(...child.values);
+        values.push(...newChild.values);
+        values.push(parentValue);
+        sequence.addFrame(new Frame(this.toJSON(this.root, values)));
         parent.leaf = false;
     }
 
     /**
-     * Insert a value in a not-full node
+     * Insert a value in a not-full node. Add frames to the given sequence
      * @param {BTreeNode} node 
      * @param {number} value 
+     * @param {Sequence} sequence 
      */
-    insertNonFull(node, value) {
+    insertNonFull(node, value, sequence) {
         let temp = node.n;
         if (node.leaf) {
-            node.addValue(value);
+            node.addValue(value, sequence);
         } else {
             while (temp >= 1 && value < node.values[temp - 1]) {
+                // Insert frame for each value compared
+                sequence.addFrame(new Frame(this.toJSON(this.root, [node.values[temp - 1]])));
                 temp = temp - 1;
             }
+            // Highlight next node
+            sequence.addFrame(new Frame(this.toJSON(this.root, node.children[temp].values)));
             if (node.children[temp].n === 2 * this.order - 1) {
-                this.split(node.children[temp], node, temp + 1);
+                this.split(node.children[temp], node, temp + 1, sequence);
                 if (value  > node.values[temp]) {
                     temp = temp + 1;
+                    // Highlight next node
+                    sequence.addFrame(new Frame(this.toJSON(this.root, node.children[temp].values)));
                 }
             }
-            this.insertNonFull(node.children[temp], value);
+            this.insertNonFull(node.children[temp], value, sequence);
         }
     }
 
@@ -155,13 +201,15 @@ export default class BTree {
      * @param {BTreeNode} node 
      * @returns {VisualizerTreeNode}
     */
-    toJSON(node = this.root) {
+    toJSON(node, highlight=[]) {
         const structure = new VisualizerTreeNode();
         structure.leaves = new VisualizerNodeLeaf();
+        console.log(highlight);
         for (let i = 0; i < node.n; i++) {
-            structure.leaves.addKey(node.values[i]);
+            const highlighted = highlight.includes(node.values[i]);
+            structure.leaves.addKey(node.values[i], highlighted);
         }
-        structure.children = node.children.map((node) => this.toJSON(node));
+        structure.children = node.children.map((node) => this.toJSON(node, highlight));
         return structure;
     }           
     
