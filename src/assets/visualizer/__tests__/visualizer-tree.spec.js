@@ -6,8 +6,8 @@ describe("VisualizerTreeNode",()=>{
         root.leaves.addKey(1);
         root.leaves.addKey(2,true);
         expect(root.leaves.keys).toEqual(
-            [{key:1, highlighted: false},
-            {key:2, highlighted: true}]
+            [{value:1, highlighted: false},
+            {value:2, highlighted: true}]
         );
     });
     test("appends children",()=>{
@@ -22,8 +22,8 @@ describe("VisualizerTreeNode",()=>{
         root.leaves.highlight(0);
         root.leaves.deEmphasize(1);
         expect(root.leaves.keys).toEqual(
-            [{key:1, highlighted: true},
-                {key:2, highlighted: false}]
+            [{value:1, highlighted: true},
+                {value:2, highlighted: false}]
         )
     })
 })

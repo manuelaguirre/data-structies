@@ -34,13 +34,12 @@
             :style="node.style"
           >
             <rect
-              :width="settings.keyCellWidth + (key.digits - 1)*3"
-              :height="settings.keyCellHeight"
-              :x="key.position * (settings.keyCellWidth + (key.digits - 1)*3) -
-                ((settings.keyCellWidth + (key.digits - 1)*3)/2) * (node.keys.length)"
-              :y="-1 * settings.keyCellHeight/2"
-              :style="node.rectStyle"
-            />
+              :width="key.svgParams.width"
+              :height="key.svgParams.height"
+              :x="key.svgParams.x"
+              :y="key.svgParams.y"
+              :style="key.svgParams.style"
+            /> <rect />
             <text
               :dx="key.position * settings.keyCellWidth -
                 (settings.keyCellWidth/2) * (node.keys.length) + 10 - (key.digits - 2)*4"
@@ -63,6 +62,7 @@ import Sequence from '../../assets/visualizer/frame';
 
 export default {
   name: 'Visualizer',
+
   props: {
     width: { type: Number, default: 800 },
     height: { type: Number, default: 450 },
@@ -83,9 +83,30 @@ export default {
         width: '100',
         keyCellWidth: 38,
         keyCellHeight: 28,
+        linkStyles: {
+          plain: {
+            stroke: 'black',
+          },
+          highlighted: {
+            stroke: 'red',
+          },
+        },
+        rectStyles: {
+          plain: {
+            fill: 'white',
+            stroke: 'black',
+            strokeWidth: 2,
+          },
+          highlighted: {
+            fill: 'lightblue',
+            stroke: 'red',
+            strokeWidth: 2,
+          },
+        },
       },
     };
   },
+
   computed: {
     root() {
       /** @type {Sequence} */
@@ -96,55 +117,14 @@ export default {
     },
     nodes() {
       if (this.root) {
-        const nodes = this.root.descendants().map((d, i) => {
-          const x = `${this.margin.left + d.x}px`;
-          const y = `${parseInt(-1 * d.y + this.margin.top, 10)}px`;
-
-          return {
-            id: `${i}`,
-            r: 2.5,
-            keys: d.data.leaves.keys ? d.data.leaves.keys.map((k, ii) => ({
-              text: k.toString(),
-              position: ii,
-              digits: k.toString().length,
-            })) : null,
-            style: {
-              transform: `translate(${x},${y})`,
-            },
-            rectStyle: {
-              fill: 'white',
-              stroke: 'black',
-              strokeWidth: 2,
-            },
-            textpos: {
-              x: d.children ? -8 : 8,
-              y: 3,
-            },
-            textStyle: {
-
-            },
-          };
-        });
+        const nodes = this.getNodes(this.root.descendants());
         return nodes;
       }
       return undefined;
     },
     links() {
-      const that = this;
       if (this.root) {
-        const links = this.root.descendants().slice(1).map((d, i) => {
-          const x = d.x + this.margin.left;
-          const parentx = d.parent.x + this.margin.left;
-          const y = parseInt(-1 * d.y + this.margin.top, 10);
-          const parenty = parseInt(-1 * d.parent.y + this.margin.top, 10);
-          return {
-            id: i,
-            d: `M${x},${y}L${parentx},${parenty}`,
-            style: {
-              stroke: that.settings.strokeColor,
-            },
-          };
-        });
+        const links = this.getLinks(this.root.descendants());
         return links;
       }
       return undefined;
@@ -154,6 +134,57 @@ export default {
     },
     getWith() {
       return this.$refs && this.$refs.cont ? this.$refs.cont.clientWidth : 800;
+    },
+  },
+
+  methods: {
+    getSVGParams(key, position, keys) {
+      return {
+        width: this.settings.keyCellWidth + (key.value.toString().length - 1) * 3,
+        height: this.settings.keyCellHeight,
+        x: position * (this.settings.keyCellWidth + (key.value.toString().length - 1) * 3)
+                - ((this.settings.keyCellWidth + (key.value.toString().length - 1) * 3) / 2) * (keys.length),
+        y: -this.settings.keyCellHeight / 2,
+        style: key.highlighted ? this.settings.rectStyles.highlighted : this.settings.rectStyles.plain,
+      };
+    },
+    getKeys(keys) {
+      return keys.map((key, ii, keyArray) => (
+        {
+          text: key.value.toString(),
+          position: ii,
+          highlighted: key.highlighted,
+          digits: key.value.toString().length,
+          svgParams: this.getSVGParams(key, ii, keyArray),
+        }
+      )) || null;
+    },
+    getNodes(descendants) {
+      return descendants.map((d, i) => {
+        const x = `${this.margin.left + d.x}px`;
+        const y = `${this.margin.top - d.y}px`;
+        return {
+          id: i,
+          keys: this.getKeys(d.data.leaves.keys),
+          style: {
+            transform: `translate(${x},${y})`,
+          },
+        };
+      });
+    },
+    getLinks(descendants) {
+      return descendants.slice(1).map((d, i) => {
+        const x = d.x + this.margin.left;
+        const parentx = this.margin.left + d.parent.x;
+        const y = this.margin.top - d.y;
+        const parenty = this.margin.top - d.parent.y;
+        const highlighted = d.data.leaves.keys.some((key) => key.highlighted) && d.parent.data.leaves.keys.some((key) => key.highlighted);
+        return {
+          id: i,
+          d: `M${x},${y}L${parentx},${parenty}`,
+          style: highlighted ? this.settings.linkStyles.highlighted : this.settings.linkStyles.plain,
+        };
+      });
     },
   },
 
