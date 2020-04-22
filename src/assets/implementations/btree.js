@@ -1,75 +1,168 @@
-import Tree from "./tree";
+import VisualizerTreeNode, { VisualizerNodeLeaf } from "../visualizer/visualizer-tree";
+
+export class BTreeNode {
+    constructor(isLeaf) {
+        /**
+         * @type {number[]} list of values in the node
+        */
+        this.values = [];
+        /**
+         * @type {boolean} is a leaf
+        */
+        this.leaf = isLeaf;
+        /**
+         * @type {BTreeNode[]}
+        */
+        this.children = [];
+    }
+
+    /**
+     * Number of values
+     * @returns {number}
+     */
+    get n() {
+        return this.values.length;
+    }
+
+    /**
+     * Add value
+     * @param {number} value 
+     * @param {number} pos 
+     */
+    addValue(value) {
+        if (value) {
+            let pos = 0;
+            while (pos < this.n && this.values[pos] < value) {
+                pos++;
+            }
+            this.values.splice(pos, 0, value);
+        }
+    }
+
+    /**
+     * Delete value and return it
+     * @param {number} pos position
+     * @return {number}
+     */
+    removeValue(pos) {
+        if (pos >= this.n) {
+            return null;
+        }
+        return this.values.splice(pos, 1)[0];
+    }
+
+    /**
+     * Add child node at position pos
+     * @param {BTreeNode} node 
+     * @param {number} pos 
+     */
+    addChild(node, pos) {
+        this.children.splice(pos, 0, node);
+    }
+    /**
+     * Delete node from position and return it
+     * @param {number} pos 
+     * @return {BTreeNode}
+     */
+    deleteChild(pos) {
+        return this.children.splice(pos, 1)[0];
+    }
+}
 
 /**
  * btree namespace.
- * @type {Object.<string,*>}
+ * @type {BTree}
  */
-export default class Btree extends Tree {
+export default class BTree {
     constructor(order) {
-        super();
+        /** @type {number} */
         this.order = order;
-        this.root.order = this.order;
+        /** 
+         * Root node of the tree.
+         * @type {BTreeNode} 
+        */
+        this.root;
     }
 
     /**
-     * Strictly compares two strings, character by character. No locales, no number extension.
-     * @param {string} a
-     * @param {string} b
-     * @returns {number} -1 if a < b, 1 if a > b, 0 otherwise
-     * @expose
+     * Insert a new value in the tree
+     * @param {number} value 
      */
-    strcmp(a, b) {
-        /** @type {number} */
-        var ac;
-        /** @type {number} */
-        var bc;
-        for (var i=0; i<a.length; i++) {
-            if (i >= b.length) {
-                return 1;
-            }
-            if ((ac = a.charCodeAt(i)) < (bc = b.charCodeAt(i))) {
-                return -1;
-            } else if (ac > bc) {
-                return 1;
-            }
-            // If same, continue
+    insert(value) {
+        const actual = this.root;
+        if (actual.n === this.order + 1) {
+            const temp = new BTreeNode(false);
+            this.root = temp;
+            temp.addChild(actual, temp.children.length - 1);
+            this.split(actual, temp, 1);
+            this.insertNonFull(temp, parseInt(value));
+        } else {
+            this.insertNonFull(actual, parseInt(value));
         }
-        return a.length == b.length ? 0 : -1;
-    };
-
-    /**
-     * Compares two numbers.
-     * @param {number} a
-     * @param {number} b
-     * @returns {number} -1 if a < b, 1 if a > b, 0 otherwise
-     * @expose
-     */
-    numcmp(numA, numB) {
-        let [a, b] = [+numA, +numB];
-        return a < b ? -1 : (a > b ? 1 : 0);
     };
     
     /**
-     * Creates a BTree class using the given order.
-     * Note that this method returns a class, not an instance.
-     * @param {function(?, ?):number=} compare Compare implementation to use on keys
-     * @returns {Function}
-     * @expose
+     * Divide child node from parent into parent.values[pos-1] and parent.values[pos]
+     * @param {BTreeNode} child 
+     * @param {BTreeNode} parent 
+     * @param {number} pos 
      */
-    create(order) {
-        
-        // Validate order
-        if (typeof this.order === 'undefined') {
-            this.order = 2; // Benchmarks proofed that this is close to the optimum
-        } else if (typeof order === 'number') {
-            this.order = Math.floor(order);
-        } else {
-            this.order = parseInt(order, 10);
+    split(child, parent, pos) {
+        const newChild = new BTreeNode(child.leaf);
+        // Create a new child for the parent
+        // Trasspass values from the old child to the new
+        for (let k = 1; k < this.order; k++) {
+            newChild.addValue(child.removeValue(this.order));
         }
-        if (order < 1) order = 1;
-        this.minOrder = order > 1 ? Math.floor(order/2) : 1;
-
-        // Use numcmp by default
-        this.compare = (numA, numB) => this.numcmp(numA, numB);
+        // Trasspass child nodes from the old child to the new
+        if (!child.leaf) {
+            for (let k = 1; k <= this.order; k++) {
+                newChild.addChild(child.deleteChild(this.order), k - 1);
+            }
+        }
+        // Add new child to the parent
+        parent.addChild(newChild, pos);
+        // Add traspassed value to parent
+        parent.addValue(child.removeValue(this.order - 1));
+        parent.leaf = false;
     }
+
+    /**
+     * Insert a value in a not-full node
+     * @param {BTreeNode} node 
+     * @param {number} value 
+     */
+    insertNonFull(node, value) {
+        let temp = node.n;
+        if (node.leaf) {
+            node.addValue(value);
+        } else {
+            while (temp >= 1 && value < node.values[temp - 1]) {
+                temp = temp - 1;
+            }
+            if (node.children[temp].n === 2 * this.order - 1) {
+                this.split(node.children[temp], node, temp + 1);
+                if (value  > node.values[temp]) {
+                    temp = temp + 1;
+                }
+            }
+            this.insertNonFull(node.children[temp], value);
+        }
+    }
+
+    /**
+     * Creates a VisualizerTreeNode
+     * @param {BTreeNode} node 
+     * @returns {VisualizerTreeNode}
+    */
+    toJSON(node = this.root) {
+        const structure = new VisualizerTreeNode();
+        structure.leaves = new VisualizerNodeLeaf();
+        for (let i = 0; i < node.n; i++) {
+            structure.leaves.addKey(node.values[i]);
+        }
+        structure.children = node.children.map((node) => this.toJSON(node));
+        return structure;
+    }           
+    
 }

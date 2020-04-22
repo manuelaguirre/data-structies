@@ -39,13 +39,12 @@
 <script>
 
 import Router from 'vue-router';
-import Btree from '../assets/implementations/btree';
+import BTree, { BTreeNode } from '../assets/implementations/btree';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
 import Sequence, { Frame } from '../assets/visualizer/frame';
-
 
 const router = new Router();
 
@@ -59,20 +58,21 @@ export default {
   },
   data() {
     return {
-      bTree: new Btree(2),
+      bTree: null,
       sequences: [],
       current: 0,
     };
   },
-  computed: {
-
+  mounted() {
+    this.bTree = new BTree(2);
+    this.bTree.root = new BTreeNode(true);
   },
   methods: {
     goBack() {
       router.back();
     },
     insertInputEvent(event) {
-      this.bTree.put(event, 'insert');
+      this.bTree.insert(event, 'insert');
       const sequence = new Sequence();
       const frame = new Frame();
       frame.tree = this.bTree.toJSON();
@@ -94,8 +94,8 @@ export default {
       if (this.current < 0) {
         this.current = 0;
       }
-      if (this.current > this.displayedTreeList.length - 1) {
-        this.current = this.displayedTreeList.length - 1;
+      if (this.current > this.sequences.length - 1) {
+        this.current = this.sequences.length - 1;
       }
     },
   },
