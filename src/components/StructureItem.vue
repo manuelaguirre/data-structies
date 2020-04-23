@@ -17,9 +17,6 @@
         {{ dataStructure.name }}
       </router-link>
     </h4>
-    <h3>
-      {{ dataStructure.code }}
-    </h3>
   </div>
 </template>
 
