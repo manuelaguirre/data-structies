@@ -7,12 +7,12 @@
   >
     <div id="img-wrapper">
       <img
-        class="mx-auto"
+        class="mx-auto w-64 h-64"
         :src="dataStructure.imageUrl"
         :alt="dataStructure.name"
       >
     </div>
-    <h4 class="pt-8">
+    <h4 class="p-4">
       <router-link :to="'/structure/' + dataStructure.code">
         {{ dataStructure.name }}
       </router-link>
