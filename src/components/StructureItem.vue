@@ -2,12 +2,12 @@
 <template>
   <div
     id="structure-item-container"
-    class="flex item-container font-hairline inline-block flex-shrink-0 border-2 border-content
-      rounded-md bg-white overflow-hidden w-32 h-48 p-2"
+    class="flex-column item-container font-hairline inline-block flex-shrink-0 border-2 border-content
+      rounded-md bg-white overflow-hidden w-64 h-48 p-2"
   >
-    <div id="img-wrapper h-2/3">
+    <div id="img-wrapper">
       <img
-        class="object-cover object-bottom "
+        class="mx-auto"
         :src="dataStructure.imageUrl"
         :alt="dataStructure.name"
       >
@@ -40,7 +40,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .item-container {
-    flex-direction: column;
     height: fit-content;
     min-height: 200px;
   }
