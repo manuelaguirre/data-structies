@@ -16,14 +16,17 @@
     </div>
     <div class="flex buttons">
       <InsertInput
+        :disabled="isDisabled"
         @myEvent="insertInputEvent"
       />
       <DeleteInput
+        :disabled="isDisabled"
         @myEvent="deleteInputEvent"
       />
       <HistoryButtons
         :current="current"
         :length="sequences.length"
+        :disabled="isDisabled"
         @historyEvents="changeCurrent"
       />
     </div>
@@ -39,13 +42,12 @@
 <script>
 
 import Router from 'vue-router';
-import Btree from '../assets/implementations/btree';
+import BTree, { BTreeNode } from '../assets/implementations/btree';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
-import Sequence, { Frame } from '../assets/visualizer/frame';
-
+import Sequence from '../assets/visualizer/frame';
 
 const router = new Router();
 
@@ -59,43 +61,51 @@ export default {
   },
   data() {
     return {
-      bTree: new Btree(2),
+      /** @type {BTree} */
+      bTree: null,
       sequences: [],
       current: 0,
+      isDisabled: false,
     };
   },
-  computed: {
-
+  mounted() {
+    this.bTree = new BTree(2);
+    this.bTree.root = new BTreeNode(true);
+    this.bTree.root.tree = this.bTree;
   },
   methods: {
     goBack() {
       router.back();
     },
     insertInputEvent(event) {
-      this.bTree.put(event, 'insert');
-      const sequence = new Sequence();
-      const frame = new Frame();
-      frame.tree = this.bTree.toJSON();
-      sequence.addFrame(frame);
-      this.sequences.push(sequence);
-      this.current = this.sequences.length - 1;
+      this.addSequenceAsync(this.bTree.insert(event));
     },
     deleteInputEvent(event) {
-      this.bTree.del(event);
-      const sequence = new Sequence();
-      const frame = new Frame();
-      frame.tree = this.bTree.toJSON();
-      sequence.addFrame(frame);
-      this.sequences.push(sequence);
+      this.addSequenceAsync(this.bTree.delete(event));
+    },
+    addSequenceAsync(frames) {
+      this.isDisabled = true;
+      const newSequence = new Sequence();
+      newSequence.addFrame(frames.frames[0]);
+      this.sequences.push(newSequence);
       this.current = this.sequences.length - 1;
+      for (let i = 1; i < frames.frames.length; i += 1) {
+        setTimeout(() => {
+          newSequence.addFrame(frames.frames[i]);
+          if (i === frames.frames.length - 1) {
+            this.isDisabled = false;
+          }
+          this.sequences = Object.assign(this.sequences);
+        }, i * 500);
+      }
     },
     changeCurrent(event) {
       this.current += event;
       if (this.current < 0) {
         this.current = 0;
       }
-      if (this.current > this.displayedTreeList.length - 1) {
-        this.current = this.displayedTreeList.length - 1;
+      if (this.current > this.sequences.length - 1) {
+        this.current = this.sequences.length - 1;
       }
     },
   },

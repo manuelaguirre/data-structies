@@ -3,7 +3,7 @@
  * @param {Number[]} keys Initial set 
 */
 export class VisualizerNodeLeaf {
-  constructor(keys) {
+  constructor() {
     /** @type {Object[]} */
     this.keys = [];
   }
