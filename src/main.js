@@ -5,6 +5,7 @@ import App from './App.vue';
 import MainMenu from './components/MainMenu.vue';
 import BTreeVisualizer from './components/BTreeVisualizer.vue';
 import MinHeapVisualizer from './components/MinHeapVisualizer.vue';
+import MaxHeapVisualizer from './components/MaxHeapVisualizer.vue';
 import LineChartExample from './components/mock/LineChartExample.vue';
 import './assets/css/tailwind.css';
 
@@ -25,6 +26,7 @@ Vue.use(VueRouter);
 const routes = [
   { path: '/structure/b-tree', component: BTreeVisualizer },
   { path: '/structure/min-heap', component: MinHeapVisualizer },
+  { path: '/structure/max-heap', component: MaxHeapVisualizer },
   { path: '/', component: MainMenu },
   { path: '/linechart', component: LineChartExample }];
 

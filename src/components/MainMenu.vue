@@ -62,10 +62,16 @@ export default {
         name: 'B Tree',
         imageUrl: 'https://firebasestorage.googleapis.com/v0/b/structies.appspot.com/o/BTree.png?alt=media&token=403220cb-809a-4425-bbec-24e857ac7a40',
         code: 'b-tree',
-      }, {
+      },
+      {
         name: 'Min Heap',
         imageUrl: 'https://firebasestorage.googleapis.com/v0/b/structies.appspot.com/o/minheap.jpg?alt=media&token=98746fc9-b164-421a-8690-bc1c2bcdef63',
         code: 'min-heap',
+      },
+      {
+        name: 'Max Heap',
+        imageUrl: 'https://firebasestorage.googleapis.com/v0/b/structies.appspot.com/o/MaxHeap.png?alt=media&token=2c9e0ccd-7a9c-4021-9856-ed10c94ff452',
+        code: 'max-heap',
       },
     ],
   }),
