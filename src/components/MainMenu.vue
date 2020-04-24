@@ -70,7 +70,7 @@ export default {
       },
       {
         name: 'Max Heap',
-        imageUrl: 'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/02/pablito-lescano.gif',
+        imageUrl: 'https://firebasestorage.googleapis.com/v0/b/structies.appspot.com/o/MaxHeap.png?alt=media&token=2c9e0ccd-7a9c-4021-9856-ed10c94ff452',
         code: 'max-heap',
       },
     ],

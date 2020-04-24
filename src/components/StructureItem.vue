@@ -7,7 +7,7 @@
   >
     <div id="img-wrapper">
       <img
-        class="mx-auto w-64 h-64"
+        class="mx-auto w-64 h-64 object-cover"
         :src="dataStructure.imageUrl"
         :alt="dataStructure.name"
       >
