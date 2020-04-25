@@ -30,11 +30,18 @@
         :disabled="isDisabled"
         @historyEvents="changeCurrent"
       />
+      <StepButtons
+        :current-frame="currentFrame"
+        :length="sequence ? sequence.frames.length : 0"
+        :disabled="false"
+        @frameHistoryEvents="changeCurrentFrame"
+      />
     </div>
     <div class="visualier-cont">
       <Visualizer
         :sequences="sequences"
         :current="current"
+        :current-frame="currentFrame"
       />
     </div>
   </div>
@@ -49,6 +56,7 @@ import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
 import Sequence from '../assets/visualizer/frame';
+import StepButtons from './shared/StepButtons.vue';
 
 const router = new Router();
 
@@ -59,6 +67,7 @@ export default {
     DeleteInput,
     Visualizer,
     HistoryButtons,
+    StepButtons,
   },
   data() {
     return {
@@ -66,6 +75,7 @@ export default {
       /** @type {Sequence[]} */
       sequencesList: [],
       current: 0,
+      currentFrame: 0,
       onlypop: true,
       isDisabled: false,
     };
@@ -74,6 +84,11 @@ export default {
     sequences() {
       return this.sequencesList;
     },
+    sequence() {
+      return this.sequencesList[this.current];
+    },
+
+
   },
   methods: {
     goBack() {
@@ -91,14 +106,27 @@ export default {
       newSequence.addFrame(frames.frames[0]);
       this.sequencesList.push(newSequence);
       this.current = this.sequencesList.length - 1;
+      this.currentFrame = 0;
+
       for (let i = 1; i < frames.frames.length; i += 1) {
         setTimeout(() => {
           newSequence.addFrame(frames.frames[i]);
           if (i === frames.frames.length - 1) {
             this.isDisabled = false;
           }
+          this.currentFrame += 1;
           this.sequencesList = Object.assign(this.sequencesList);
         }, i * 1000);
+      }
+    },
+    changeCurrentFrame(event) {
+      this.currentFrame += event;
+      if (this.currentFrame < 0) {
+        this.current -= 1;
+        this.currentFrame = this.sequencesList[this.current].frames.length - 1;
+      }
+      if (this.currentFrame > this.sequencesList[this.current].frames.length - 1) {
+        this.currentFrame = this.sequencesList[this.current].frames.length - 1;
       }
     },
     changeCurrent(event) {
@@ -109,6 +137,7 @@ export default {
       if (this.current > this.sequencesList.length - 1) {
         this.current = this.sequencesList.length - 1;
       }
+      this.currentFrame = this.sequencesList[this.current].frames.length - 1;
     },
   },
 };

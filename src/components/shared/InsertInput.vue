@@ -4,6 +4,7 @@
       class="text-field"
       label="Insert a Value"
       :value="insertedValue"
+      :disabled="disabled"
       @input="insertedValue = $event"
       @keyup.enter="insertValue"
     />
