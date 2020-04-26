@@ -4,9 +4,6 @@
     fluid
     class="flex-column max-w-3xl menu-container"
   >
-    <h1 class="headline">
-      Welcome to Structies!
-    </h1>
     <p />
     <v-container
       fluid
@@ -19,6 +16,19 @@
         :data-structure="item"
       />
     </v-container>
+    <v-row
+      justify="center"
+      no-gutters
+    >
+      <v-col
+        sm="6"
+      >
+        <img
+          aria-label="Logo Structies"
+          src="https://firebasestorage.googleapis.com/v0/b/structies.appspot.com/o/structies-logo.png?alt=media&token=14401c07-2ec3-4630-9e0d-ae70c80b4bae"
+        >
+      </v-col>
+    </v-row>
     <v-container>
       <h2 class="title">
         Developed with love by
@@ -30,11 +40,7 @@
           aria-label="Creator git-hub link"
           href="https://github.com/manuelaguirre"
         >manuelaguirre</a>
-      </h3>
-      <p class="mb-0">
         &
-      </p>
-      <h3 class="subtitle-1">
         <a
           target="_blank"
           role="link"

@@ -3,12 +3,6 @@
     id="max-heap-visualizer"
     class="flex tree-container"
   >
-    <v-btn
-      class="back md-raised md-primary"
-      @click="goBack"
-    >
-      Go back
-    </v-btn>
     <div class="title">
       <h1 class="name">
         Structure: Max Heap
