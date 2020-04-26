@@ -1,19 +1,22 @@
 <template>
-  <div class="flex button-container">
-    <v-btn
-      class="button"
-      :disabled="false"
-      @click="stepBack"
-    >
-      <strong>&lt;</strong>
-    </v-btn>
-    <v-btn
-      class="button"
-      :disabled="currentFrame >= length - 1 || disabled"
-      @click="stepForward"
-    >
-      <strong>&gt;</strong>
-    </v-btn>
+  <div class="step-interface-container">
+    <div class="flex button-container">
+      <v-btn
+        class="button yellow lighten-4"
+        :disabled="disabled.backStepButtonIsDisabled"
+        @click="stepBack"
+      >
+        <strong>&lt;</strong>
+      </v-btn>
+      <v-btn
+        class="button yellow lighten-4"
+        :disabled="disabled.forwardStepButtonIsDisabled"
+        @click="stepForward"
+      >
+        <strong>&gt;</strong>
+      </v-btn>
+    </div>
+    <span class="text-sm">Animation Frame</span>
   </div>
 </template>
 
@@ -23,7 +26,7 @@ export default {
   props: {
     length: { type: Number, default: 1 },
     currentFrame: { type: Number, default: 0 },
-    disabled: { type: Boolean },
+    disabled: { type: Object, default: undefined },
   },
   methods: {
     stepBack() {

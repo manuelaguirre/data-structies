@@ -1,19 +1,22 @@
 <template>
-  <div class="flex button-container">
-    <v-btn
-      class="button"
-      :disabled="current <= 0 || disabled"
-      @click="historyBack"
-    >
-      <strong>&lt;</strong>
-    </v-btn>
-    <v-btn
-      class="button"
-      :disabled="current >= length - 1 || disabled"
-      @click="historyForward"
-    >
-      <strong>&gt;</strong>
-    </v-btn>
+  <div class="history-interface-container">
+    <div class="flex button-container">
+      <v-btn
+        class="button deep-orange lighten-2"
+        :disabled="current <= 0 || disabled"
+        @click="historyBack"
+      >
+        <strong>&#8602;</strong>
+      </v-btn>
+      <v-btn
+        class="button deep-orange lighten-2"
+        :disabled="current >= length - 1 || disabled"
+        @click="historyForward"
+      >
+        <strong>&#8603;</strong>
+      </v-btn>
+    </div>
+    <span class="text-sm">History</span>
   </div>
 </template>
 

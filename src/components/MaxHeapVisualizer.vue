@@ -1,6 +1,6 @@
 <template>
   <div
-    id="max-heap-visualizer"
+    id="min-heap-visualizer"
     class="flex tree-container"
   >
     <v-btn
@@ -24,18 +24,33 @@
         :disabled="isDisabled"
         @myEvent="deleteInputEvent"
       />
-      <HistoryButtons
-        :current="current"
-        :length="sequences.length"
-        :disabled="isDisabled"
-        @historyEvents="changeCurrent"
-      />
     </div>
     <div class="visualizer-cont">
       <Visualizer
         :sequences="sequences"
         :current="current"
+        :current-frame="currentFrame"
       />
+    </div>
+    <div class="arrow-button-container flex m-auto">
+      <div class="history-btn-container">
+        <HistoryButtons
+          class="mx-4"
+          :current="current"
+          :length="sequences.length"
+          :disabled="isDisabled"
+          @historyEvents="changeCurrent"
+        />
+      </div>
+      <div class="step-btn-container">
+        <StepButtons
+          class="mx-4"
+          :current-frame="currentFrame"
+          :length="currentSequence ? currentSequence.frames.length : 0"
+          :disabled="stepButtonsAreDisabled"
+          @frameHistoryEvents="changeCurrentFrame"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -48,6 +63,7 @@ import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
+import StepButtons from './shared/StepButtons.vue';
 import Sequence from '../assets/visualizer/frame';
 
 const router = new Router();
@@ -59,6 +75,7 @@ export default {
     DeleteInput,
     Visualizer,
     HistoryButtons,
+    StepButtons,
   },
   data() {
     return {
@@ -66,6 +83,7 @@ export default {
       /** @type {Sequence[]} */
       sequencesList: [],
       current: 0,
+      currentFrame: 0,
       onlypop: true,
       isDisabled: false,
     };
@@ -74,7 +92,22 @@ export default {
     sequences() {
       return this.sequencesList;
     },
+    currentSequence() {
+      return this.sequencesList[this.current];
+    },
+    stepButtonsAreDisabled() {
+      if (!this.currentSequence) {
+        return {
+          backStepButtonIsDisabled: true, forwardStepButtonIsDisabled: true,
+        };
+      }
+      const backStepButtonIsDisabled = this.current <= 0 && this.currentFrame <= 0;
+      const forwardStepButtonIsDisabled = this.current >= this.sequences.length - 1
+             && this.currentFrame >= this.currentSequence.frames.length - 1;
+      return { backStepButtonIsDisabled, forwardStepButtonIsDisabled };
+    },
   },
+
   methods: {
     goBack() {
       router.back();
@@ -91,14 +124,27 @@ export default {
       newSequence.addFrame(frames.frames[0]);
       this.sequencesList.push(newSequence);
       this.current = this.sequencesList.length - 1;
+      this.currentFrame = 0;
       for (let i = 1; i < frames.frames.length; i += 1) {
         setTimeout(() => {
           newSequence.addFrame(frames.frames[i]);
           if (i === frames.frames.length - 1) {
             this.isDisabled = false;
           }
+          this.currentFrame += 1;
           this.sequencesList = Object.assign(this.sequencesList);
         }, i * 1000);
+      }
+    },
+    changeCurrentFrame(event) {
+      this.currentFrame += event;
+      if (this.currentFrame < 0) {
+        this.changeCurrent(-1);
+        this.currentFrame = this.sequencesList[this.current].frames.length - 1;
+      }
+      if (this.currentFrame > this.sequencesList[this.current].frames.length - 1) {
+        this.changeCurrent(1);
+        this.currentFrame = 0;
       }
     },
     changeCurrent(event) {
@@ -108,6 +154,7 @@ export default {
       }
       if (this.current > this.sequencesList.length - 1) {
         this.current = this.sequencesList.length - 1;
+        this.currentFrame = 0;
       }
     },
   },
