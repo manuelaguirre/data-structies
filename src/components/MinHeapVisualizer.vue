@@ -43,7 +43,7 @@
         />
       </div>
       <div class="step-btn-container">
-        <StepButtons
+        <HistoryButtons
           class="mx-4"
           :current-frame="currentFrame"
           :length="currentSequence ? currentSequence.frames.length : 0"
@@ -63,7 +63,6 @@ import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
-import StepButtons from './shared/StepButtons.vue';
 import Sequence from '../assets/visualizer/frame';
 
 const router = new Router();
@@ -75,7 +74,6 @@ export default {
     DeleteInput,
     Visualizer,
     HistoryButtons,
-    StepButtons,
   },
   data() {
     return {

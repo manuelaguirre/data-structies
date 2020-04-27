@@ -1,22 +1,22 @@
 <template>
-  <div class="history-interface-container">
+  <div class="step-interface-container">
     <div class="flex button-container">
       <v-btn
-        class="button deep-orange lighten-2"
-        :disabled="current <= 0 || disabled"
-        @click="historyBack"
+        class="button yellow lighten-4"
+        :disabled="disabled.backButtonIsDisabled"
+        @click="stepBack"
       >
-        <strong>&#8602;</strong>
+        <strong>&lt;</strong>
       </v-btn>
       <v-btn
-        class="button deep-orange lighten-2"
-        :disabled="current >= length - 1 || disabled"
-        @click="historyForward"
+        class="button yellow lighten-4"
+        :disabled="disabled.forwardButtonIsDisabled"
+        @click="stepForward"
       >
-        <strong>&#8603;</strong>
+        <strong>&gt;</strong>
       </v-btn>
     </div>
-    <span class="text-sm">History</span>
+    <span class="text-sm">Animation Frame</span>
   </div>
 </template>
 
@@ -25,15 +25,15 @@ export default {
   name: 'HistoryButtons',
   props: {
     length: { type: Number, default: 1 },
-    current: { type: Number, default: 0 },
-    disabled: { type: Boolean },
+    currentFrame: { type: Number, default: 0 },
+    disabled: { type: Object, default: undefined },
   },
   methods: {
-    historyBack() {
-      this.$emit('historyEvents', -1);
+    stepBack() {
+      this.$emit('HistoryEvents', -1);
     },
-    historyForward() {
-      this.$emit('historyEvents', 1);
+    stepForward() {
+      this.$emit('HistoryEvents', 1);
     },
   },
 };
@@ -47,5 +47,6 @@ export default {
 .button {
   min-width: fit-content !important;
   font-size: 1.5rem !important;
+  background-color: beige;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div
-    id="min-heap-visualizer"
+    id="max-heap-visualizer"
     class="flex tree-container"
   >
     <v-btn
@@ -35,20 +35,22 @@
     <div class="arrow-button-container flex m-auto">
       <div class="history-btn-container">
         <HistoryButtons
+          id="history.buttons"
           class="mx-4"
           :current="current"
           :length="sequences.length"
-          :disabled="isDisabled"
-          @historyEvents="changeCurrent"
+          :disabled="historyButtonsAreDisabled"
+          @HistoryEvents="changeCurrent"
         />
       </div>
       <div class="step-btn-container">
-        <StepButtons
+        <HistoryButtons
+          id="step-buttons"
           class="mx-4"
           :current-frame="currentFrame"
           :length="currentSequence ? currentSequence.frames.length : 0"
           :disabled="stepButtonsAreDisabled"
-          @frameHistoryEvents="changeCurrentFrame"
+          @HistoryEvents="changeCurrentFrame"
         />
       </div>
     </div>
@@ -63,7 +65,6 @@ import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
-import StepButtons from './shared/StepButtons.vue';
 import Sequence from '../assets/visualizer/frame';
 
 const router = new Router();
@@ -75,7 +76,6 @@ export default {
     DeleteInput,
     Visualizer,
     HistoryButtons,
-    StepButtons,
   },
   data() {
     return {
@@ -98,13 +98,21 @@ export default {
     stepButtonsAreDisabled() {
       if (!this.currentSequence) {
         return {
-          backStepButtonIsDisabled: true, forwardStepButtonIsDisabled: true,
+          backButtonIsDisabled: true, forwardButtonIsDisabled: true,
         };
       }
-      const backStepButtonIsDisabled = this.current <= 0 && this.currentFrame <= 0;
-      const forwardStepButtonIsDisabled = this.current >= this.sequences.length - 1
+      const backButtonIsDisabled = this.current <= 0 && this.currentFrame <= 0;
+      const forwardButtonIsDisabled = this.current >= this.sequences.length - 1
              && this.currentFrame >= this.currentSequence.frames.length - 1;
-      return { backStepButtonIsDisabled, forwardStepButtonIsDisabled };
+      return { backButtonIsDisabled, forwardButtonIsDisabled };
+    },
+    historyButtonsAreDisabled() {
+      if (!this.sequencesList) {
+        return { backButtonIsDisabled: true, forwardButtonIsDisabled: true };
+      }
+      const backButtonIsDisabled = this.current <= 0;
+      const forwardButtonIsDisabled = this.current >= this.sequencesList.length - 1;
+      return { backButtonIsDisabled, forwardButtonIsDisabled };
     },
   },
 
@@ -148,13 +156,13 @@ export default {
       }
     },
     changeCurrent(event) {
+      this.currentFrame = 0;
       this.current += event;
       if (this.current < 0) {
         this.current = 0;
       }
       if (this.current > this.sequencesList.length - 1) {
         this.current = this.sequencesList.length - 1;
-        this.currentFrame = 0;
       }
     },
   },
