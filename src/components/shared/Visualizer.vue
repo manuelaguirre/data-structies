@@ -23,10 +23,9 @@
         name="list"
       >
         <g
-          v-for="(node, index) in nodes"
+          v-for="node in nodes"
           :key="node.id"
           class="node"
-          @click="select(index, node)"
         >
           <g
             v-for="key in node.keys"
@@ -71,6 +70,8 @@ export default {
       default: () => [new Sequence()],
     },
     current: { type: Number, default: 0 },
+    currentFrame: { type: Number, default: 0 },
+
   },
 
   data() {
@@ -112,7 +113,7 @@ export default {
       /** @type {Sequence} */
       const sequence = this.sequences.length ? this.sequences[this.current] : null;
       // TODO: Show all the frames in a sequence
-      const root = sequence ? sequence.frames[sequence.frames.length - 1].tree : null;
+      const root = sequence ? sequence.frames[this.currentFrame].tree : null;
       return root ? this.tree(d3.hierarchy(root)) : null;
     },
     nodes() {

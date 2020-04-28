@@ -16,26 +16,45 @@
     </div>
     <div class="flex buttons">
       <InsertInput
-        :disabled="isDisabled"
+        :disabled="isAnimating"
         @myEvent="insertInputEvent"
       />
       <DeleteInput
         :onlypop="onlypop"
-        :disabled="isDisabled"
+        :disabled="isAnimating"
         @myEvent="deleteInputEvent"
-      />
-      <HistoryButtons
-        :current="current"
-        :length="sequences.length"
-        :disabled="isDisabled"
-        @historyEvents="changeCurrent"
       />
     </div>
     <div class="visualizer-cont">
       <Visualizer
         :sequences="sequences"
-        :current="current"
+        :current="currentSequenceNumber"
+        :current-frame="currentFrame"
       />
+    </div>
+    <div class="arrow-button-container flex m-auto">
+      <div class="history-btn-container">
+        <HistoryButtons
+          id="history.buttons"
+          class="mx-4"
+          :current="currentSequenceNumber"
+          :length="sequences.length"
+          :disabled="historyButtonsAreDisabled"
+          label="History"
+          @HistoryEvents="changeCurrentSequence"
+        />
+      </div>
+      <div class="step-btn-container">
+        <HistoryButtons
+          id="step-buttons"
+          class="mx-4"
+          :current-frame="currentFrame"
+          :length="currentSequence ? currentSequence.frames.length : 0"
+          :disabled="stepButtonsAreDisabled"
+          label="Animation"
+          @HistoryEvents="changeCurrentFrame"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -65,16 +84,39 @@ export default {
       maxHeap: new MaxHeap(),
       /** @type {Sequence[]} */
       sequencesList: [],
-      current: 0,
+      currentSequenceNumber: 0,
+      currentFrame: 0,
       onlypop: true,
-      isDisabled: false,
+      isAnimating: false,
     };
   },
   computed: {
     sequences() {
       return this.sequencesList;
     },
+    currentSequence() {
+      return this.sequencesList[this.currentSequenceNumber];
+    },
+    stepButtonsAreDisabled() {
+      if (!this.currentSequence) {
+        return {
+          backButtonIsDisabled: true, forwardButtonIsDisabled: true,
+        };
+      }
+      const backButtonIsDisabled = this.currentFrame <= 0;
+      const forwardButtonIsDisabled = this.currentFrame >= this.currentSequence.frames.length - 1;
+      return { backButtonIsDisabled, forwardButtonIsDisabled, isAnimating: this.isAnimating };
+    },
+    historyButtonsAreDisabled() {
+      if (!this.sequencesList) {
+        return { backButtonIsDisabled: true, forwardButtonIsDisabled: true };
+      }
+      const backButtonIsDisabled = this.currentSequenceNumber <= 0;
+      const forwardButtonIsDisabled = this.currentSequenceNumber >= this.sequencesList.length - 1;
+      return { backButtonIsDisabled, forwardButtonIsDisabled, isAnimating: this.isAnimating };
+    },
   },
+
   methods: {
     goBack() {
       router.back();
@@ -86,29 +128,41 @@ export default {
       this.addSequenceAsync(this.maxHeap.remove());
     },
     addSequenceAsync(frames) {
-      this.isDisabled = true;
+      this.isAnimating = true;
       const newSequence = new Sequence();
       newSequence.addFrame(frames.frames[0]);
       this.sequencesList.push(newSequence);
-      this.current = this.sequencesList.length - 1;
+      this.currentSequenceNumber = this.sequencesList.length - 1;
+      this.currentFrame = 0;
       for (let i = 1; i < frames.frames.length; i += 1) {
         setTimeout(() => {
           newSequence.addFrame(frames.frames[i]);
           if (i === frames.frames.length - 1) {
-            this.isDisabled = false;
+            this.isAnimating = false;
           }
+          this.currentFrame += 1;
           this.sequencesList = Object.assign(this.sequencesList);
-        }, i * 1000);
+        }, i * 500);
       }
     },
-    changeCurrent(event) {
-      this.current += event;
-      if (this.current < 0) {
-        this.current = 0;
+    changeCurrentFrame(event) {
+      this.currentFrame += event;
+      if (this.currentFrame < 0) {
+        this.currentFrame = 0;
       }
-      if (this.current > this.sequencesList.length - 1) {
-        this.current = this.sequencesList.length - 1;
+      if (this.currentFrame > this.sequencesList[this.currentSequenceNumber].frames.length - 1) {
+        this.currentFrame = this.sequencesList[this.currentSequenceNumber].frames.length - 1;
       }
+    },
+    changeCurrentSequence(event) {
+      this.currentSequenceNumber += event;
+      if (this.currentSequenceNumber < 0) {
+        this.currentSequenceNumber = 0;
+      }
+      if (this.currentSequenceNumber > this.sequencesList.length - 1) {
+        this.currentSequenceNumber = this.sequencesList.length - 1;
+      }
+      this.currentFrame = this.currentSequence.frames.length - 1;
     },
   },
 };
