@@ -90,21 +90,6 @@ export class BTreeNode {
     deleteChild(pos) {
         return this.children.splice(pos, 1)[0];
     }
-
-    /**
-     * Get the immediate with more values
-     * @returns {BTreeNode}
-     */
-    getImmediateBrother() {
-        const index = this.parent.children.indexOf(this);
-        if (index > 0 && this.parent.children[index-1].n > this.tree.order - 1) {
-            return this.parent.children[index-1];
-        }
-        if (index < this.parent.n && this.parent.children[index+1].n > this.tree.order - 1) {
-            return this.parent.children[index+1];
-        }
-        return index > 0 ? this.parent.children[index-1] : this.parent.children[index+1];
-    }
 }
 
 /**
@@ -170,19 +155,12 @@ export default class BTree {
             this.mergeNodes(this.root.children[1], this.root.children[0], sequence);
             this.root = this.root.children[0];
         }
-        let nodeWithKey = null;
         if (this.root.n >= 1) {
             // Insert frame with the whole node highlighted
             sequence.addFrame(new Frame(this.toJSON(this.root, this.root.values)));
         }
-        // Search node with value
-        nodeWithKey = this.searchValue(parseInt(value), sequence);
-        if (!nodeWithKey) {
-            // The value is not present in the tree
-            sequence.addFrame(new Frame(this.toJSON(this.root, [])));
-            return sequence;
-        }
-        this.deleteFromNode(nodeWithKey, parseInt(value), sequence);
+        // Start looking for the value to delete
+        this.deleteFromNode(this.root, parseInt(value), sequence);
         sequence.addFrame(new Frame(this.toJSON(this.root, [])));
         return sequence;
     }
@@ -194,43 +172,74 @@ export default class BTree {
      * @param {Sequence} sequence 
      */
     deleteFromNode(node, value, sequence) {
-        if (!this.root.n) {
-            this.root = this.root.children[0];
+        sequence.addFrame(new Frame(this.toJSON(this.root, node.values)));
+        // Check if value is in the actual node 
+        const index = node.values.indexOf(value);
+        if (index >= 0) {
+            // Value present in the node
+            if (node.leaf && node.n > this.order - 1) {
+                // If the node is a leaf and has more than order-1 values, just delete it
+                sequence.addFrame(new Frame(this.toJSON(this.root, [value])));
+                node.removeValue(node.values.indexOf(value));
+                return;
+            }
+            // Check if one children has enough values to transfer
+            if (node.children[index].n > this.order - 1 ||
+                node.children[index + 1].n > this.order - 1) {
+                // One of the immediate children has enough values to transfer
+                if (node.children[index].n > this.order - 1) {
+                    // Replace the target value for the higher of left node.
+                    // Then delete that value from the child
+                    sequence.addFrame(new Frame(this.toJSON(this.root, [
+                        node.children[index].values[node.children[index].n - 1],
+                        node.values[index],
+                    ])));
+                    node.values[index] = node.children[index].values[node.children[index].n - 1];
+                    sequence.addFrame(new Frame(this.toJSON(this.root, [node.values[index]])));
+                    return this.deleteFromNode(node.children[index], node.values[index], sequence);
+                } else {
+                    sequence.addFrame(new Frame(this.toJSON(this.root, [
+                        node.children[index+1].values[0],
+                        node.values[index],
+                    ])));
+                    node.values[index] = node.children[index+1].values[0];
+                    sequence.addFrame(new Frame(this.toJSON(this.root, [node.values[index]])));
+                    return this.deleteFromNode(node.children[index+1], node.values[index], sequence);
+                }
+            }
+            // Children has not enough values to transfer. Do a merge
+            this.mergeNodes(node.children[index + 1], node.children[index], sequence);
+            return this.deleteFromNode(node.children[index], value, sequence);
         }
-        if (node.leaf && node.n > this.order - 1) {
-            // If the node is a leaf and has more than order-1 values, just delete it
-            sequence.addFrame(new Frame(this.toJSON(this.root, [value])));
-            node.removeValue(node.values.indexOf(value));
+        if (node.leaf) {
+            // Value is not in the tree
             return;
         }
-        if (node.n <= this.order - 1 && node.leaf) {
-            // Leaf with not enough values to delete
-            // Get immediate brother with extra keys or the next one to merge with
-            const brother = node.getImmediateBrother();
-            if (brother.n > this.order - 1) {
-                this.transferValue(brother, node, sequence);
-            } else {
-                this.mergeNodes(brother, node, sequence);
-            }
-            // Recursively delete value from target node
-            return this.deleteFromNode(node, value, sequence);
+        // Value is not present in the node, search in the children
+        let nextNode = 0;
+        while (nextNode < node.n && node.values[nextNode] < value) {
+            nextNode++;
         }
-        // Internal node with enough values to delete
-        const index = node.values.indexOf(value);
-        if (node.children[index].n > this.order - 1 ||
-            node.children[index + 1].n > this.order - 1) {
+        if (node.children[nextNode].n > this.order - 1) {
+            // Child node has enough values to continue
+            return this.deleteFromNode(node.children[nextNode], value, sequence);
+        }
+        // Child node has not enough values to continue
+        // Before visiting next node transfer a value or merge it with a brother
+        if ((nextNode > 0 && node.children[nextNode - 1].n > this.order - 1) ||
+            (nextNode < node.n && node.children[nextNode + 1].n > this.order - 1)) {
             // One of the immediate children has enough values to transfer
-            if (node.children[index].n > this.order - 1) {
-                this.transferValue(node.children[index], node.children[index + 1]);
-                return this.deleteFromNode(node.children[index + 1], value);
+            if (nextNode > 0 && node.children[nextNode - 1].n > this.order - 1) {
+                this.transferValue(node.children[nextNode - 1], node.children[nextNode], sequence);
             } else {
-                this.transferValue(node.children[index + 1], node.children[index]);
-                return this.deleteFromNode(node.children[index], value);
+                this.transferValue(node.children[nextNode + 1], node.children[nextNode], sequence);
             }
+            return this.deleteFromNode(node.children[nextNode], value, sequence);
         }
-        // No children with enough values.
-        // Merge both immediate children with the target value
-        this.mergeNodes(node.children[index + 1], node.children[index]);
+        // No immediate brother with enough values. Merge nodes
+        this.mergeNodes(
+            nextNode > 0 ? node.children[nextNode - 1] : node.children[nextNode + 1],
+            node.children[nextNode], sequence);
         return this.deleteFromNode(node.children[index], value, sequence);
     }
 
