@@ -121,36 +121,24 @@ export default class BTree {
         */
         this.root;
     }
-    
+
     /**
-     * Deletes the value from the Tree
+     * Search a value in the Tree and return the node. O(log N)
      * @param {number} value 
-     * @returns {Sequence}
+     * @param {Sequence} sequence 
+     * @returns {BTreeNode}
      */
-    delete(value) {
-        const sequence = new Sequence();
-        if (this.root.n === 1 && !this.root.leaf &&
-            this.root.children[0].n === this.order-1 && this.root.children[1].n === this.order -1) {
-            sequence.addFrame(new Frame(this.toJSON(
-                this.root,
-                [this.root.values[0], this.root.children[1].values[0], this.root.children[0].values[0]])));
-            // Check if the root can shrink the tree into its childs
-            this.mixNodes(this.root.children[1], this.root.children[0], sequence);
-            this.root = this.root.children[0];
-        }
-        let actual = this.root;
-        let nodeWithKey = null;
-        if (actual.n >= 1) {
-            // Insert frame with the whole node highlighted
-            sequence.addFrame(new Frame(this.toJSON(this.root, actual.values)));
-        }
+    searchValue(value, sequence) {
         // Find the node that contains the value
-        while (!nodeWithKey && actual) {
+        let node = null;
+        let actual = this.root;
+        while (!node && actual) {
             if (actual.values.includes(parseInt(value))) {
-                nodeWithKey = actual;
+                node = actual;
             } else {
                 // Search in the childs
                 if (actual.leaf) {
+                    // Value was not found
                     actual = null;
                 } else {
                     let child = 0;
@@ -163,6 +151,32 @@ export default class BTree {
                 }
             }
         }
+        return node;
+    }
+    
+    /**
+     * Deletes the value from the Tree. O(log N)
+     * @param {number} value 
+     * @returns {Sequence}
+     */
+    delete(value) {
+        const sequence = new Sequence();
+        if (this.root.n === 1 && !this.root.leaf &&
+            this.root.children[0].n === this.order-1 && this.root.children[1].n === this.order -1) {
+            sequence.addFrame(new Frame(this.toJSON(
+                this.root,
+                [this.root.values[0], this.root.children[1].values[0], this.root.children[0].values[0]])));
+            // Check if the root can shrink the tree into its childs
+            this.mergeNodes(this.root.children[1], this.root.children[0], sequence);
+            this.root = this.root.children[0];
+        }
+        let nodeWithKey = null;
+        if (this.root.n >= 1) {
+            // Insert frame with the whole node highlighted
+            sequence.addFrame(new Frame(this.toJSON(this.root, this.root.values)));
+        }
+        // Search node with value
+        nodeWithKey = this.searchValue(parseInt(value), sequence);
         if (!nodeWithKey) {
             // The value is not present in the tree
             sequence.addFrame(new Frame(this.toJSON(this.root, [])));
@@ -180,42 +194,48 @@ export default class BTree {
      * @param {Sequence} sequence 
      */
     deleteFromNode(node, value, sequence) {
+        if (!this.root.n) {
+            this.root = this.root.children[0];
+        }
         if (node.leaf && node.n > this.order - 1) {
             // If the node is a leaf and has more than order-1 values, just delete it
             sequence.addFrame(new Frame(this.toJSON(this.root, [value])));
             node.removeValue(node.values.indexOf(value));
             return;
         }
-        if (node.n <= this.order - 1 && node.parent) {
+        if (node.n <= this.order - 1 && node.leaf) {
             // Leaf with not enough values to delete
-            // Get immediate brother with extra keys or the next one to mix with
+            // Get immediate brother with extra keys or the next one to merge with
             const brother = node.getImmediateBrother();
             if (brother.n > this.order - 1) {
                 this.transferValue(brother, node, sequence);
             } else {
-                this.mixNodes(brother, node);
+                this.mergeNodes(brother, node, sequence);
             }
-            if (!this.root.n) {
-                this.root = this.root.children[0];
-            }
+            // Recursively delete value from target node
             return this.deleteFromNode(node, value, sequence);
         }
         // Internal node with enough values to delete
         const index = node.values.indexOf(value);
-        if (node.children[index].n > this.order - 1) {
-            this.transferValue(node.children[index], node.children[index + 1], sequence);
-            return this.deleteFromNode(node.children[index + 1], value, sequence);
+        if (node.children[index].n > this.order - 1 ||
+            node.children[index + 1].n > this.order - 1) {
+            // One of the immediate children has enough values to transfer
+            if (node.children[index].n > this.order - 1) {
+                this.transferValue(node.children[index], node.children[index + 1]);
+                return this.deleteFromNode(node.children[index + 1], value);
+            } else {
+                this.transferValue(node.children[index + 1], node.children[index]);
+                return this.deleteFromNode(node.children[index], value);
+            }
         }
-        if (node.children[index + 1].n > this.order - 1) {
-            this.transferValue(node.children[index + 1], node.children[index], sequence);
-        } else {
-            this.mixNodes(node.children[index + 1], node.children[index], sequence);
-        }
+        // No children with enough values.
+        // Merge both immediate children with the target value
+        this.mergeNodes(node.children[index + 1], node.children[index]);
         return this.deleteFromNode(node.children[index], value, sequence);
     }
 
     /**
-     * Transfer one value from the origin to the target.
+     * Transfer one value from the origin to the target. O(1)
      * If a sequence is provided, add frames 
      * @param {BTreeNode} origin 
      * @param {BTreeNode} target 
@@ -227,7 +247,9 @@ export default class BTree {
         if (indexo < indext) {
             const valuesFrame = [target.parent.values[indexo], origin.values[origin.n-1]];
             sequence.addFrame(new Frame(this.toJSON(this.root, valuesFrame)));
+            // Transfer value from parent to target
             target.addValue(target.parent.removeValue(indexo));
+            // Transfer value from origin to parent
             origin.parent.addValue(origin.removeValue(origin.n-1));
             if (!origin.leaf) {
                 target.addChild(origin.deleteChild(origin.children.length-1), 0);
@@ -236,7 +258,9 @@ export default class BTree {
         } else {
             const valuesFrame = [target.parent.values[indext], origin.values[0]];
             sequence.addFrame(new Frame(this.toJSON(this.root, valuesFrame)));
+            // Transfer value from parent to target
             target.addValue(target.parent.removeValue(indext));
+            // Transfer value from origin to parent
             origin.parent.addValue(origin.removeValue(0));
             if (!origin.leaf) {
                 target.addChild(origin.deleteChild(0), target.children.length);
@@ -246,16 +270,23 @@ export default class BTree {
     }
 
     /**
-     * Mix 2 nodes into one,  
+     * Merge 2 nodes into one. O(1)
      * If a sequence is provided, add frames 
      * @param {BTreeNode} origin 
      * @param {BTreeNode} target 
      * @param {Sequence} sequence 
     */
-    mixNodes(origin, target, sequence) {
+    mergeNodes(origin, target, sequence) {
         const indexo = origin.parent.children.indexOf(origin);
         const indext = target.parent.children.indexOf(target);
+        // Frame with all the nodes involved before merge
+        const valuesFrame = [target.parent.values[Math.min(indexo, indext)]];
+        origin.values.forEach((v) => valuesFrame.push(v));
+        target.values.forEach((v) => valuesFrame.push(v));
+        sequence.addFrame(new Frame(this.toJSON(this.root, valuesFrame)));
+        // Add middle value of the parent into target node
         target.addValue(target.parent.removeValue(Math.min(indexo, indext)));
+        // Add every value of origin into target node
         for (let i = origin.n - 1; i >= 0; i--) {
             target.addValue(origin.removeValue(i));
         }
@@ -267,6 +298,7 @@ export default class BTree {
                 target.addChild(origin.deleteChild(origin.children.length-1), 0);
             }
         }
+        sequence.addFrame(new Frame(this.toJSON(this.root, valuesFrame)));
     }
 
     /**
@@ -299,6 +331,7 @@ export default class BTree {
     
     /**
      * Divide child node from parent into parent.values[pos-1] and parent.values[pos]
+     * O(1)
      * @param {BTreeNode} child 
      * @param {BTreeNode} parent 
      * @param {number} pos 
@@ -334,6 +367,7 @@ export default class BTree {
 
     /**
      * Insert a value in a not-full node. Add frames to the given sequence
+     * O(1)
      * @param {BTreeNode} node 
      * @param {number} value 
      * @param {Sequence} sequence 

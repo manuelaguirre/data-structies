@@ -163,12 +163,6 @@ export default {
 </script>
 =
 <style scoped>
-  .name {
-    font-size: 3rem;
-    min-height: fit-content;
-    height: 80px;
-    line-height: 60px;
-  }
   .structies-button:hover {
     background-color:#3c48fa;
   }

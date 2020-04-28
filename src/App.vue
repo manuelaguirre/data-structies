@@ -42,5 +42,15 @@ export default {
   }
   .app-header {
     background-color: initial;
+    height: 80px;
+  }
+  .title {
+    margin: 10px 0;
+  }
+  .name {
+    font-size: 3rem;
+    min-height: fit-content;
+    height: 80px;
+    line-height: 80px;
   }
 </style>

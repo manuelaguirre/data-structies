@@ -1,6 +1,6 @@
 <template fluid>
   <v-card
-    color="bg-gray-200"
+    color="#edf2f7"
     flat
     tile
     height="80px"
