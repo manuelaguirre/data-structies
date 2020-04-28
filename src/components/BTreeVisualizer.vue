@@ -3,12 +3,6 @@
     id="b-bTree-visualizer"
     class="flex tree-container"
   >
-    <v-btn
-      class="back md-raised md-primary"
-      @click="goBack"
-    >
-      Go back
-    </v-btn>
     <div class="title">
       <h1 class="name">
         Structure: B Tree
@@ -174,12 +168,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .name {
-    font-size: 3rem;
-    min-height: fit-content;
-    height: 80px;
-    line-height: 60px;
-  }
   .structies-button:hover {
     background-color:#3c48fa;
   }
