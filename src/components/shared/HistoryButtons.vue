@@ -3,20 +3,20 @@
     <div class="flex button-container">
       <v-btn
         class="button yellow lighten-4"
-        :disabled="disabled.backButtonIsDisabled"
+        :disabled="disabled.backButtonIsDisabled || disabled.isAnimating"
         @click="stepBack"
       >
         <strong>&lt;</strong>
       </v-btn>
       <v-btn
         class="button yellow lighten-4"
-        :disabled="disabled.forwardButtonIsDisabled"
+        :disabled="disabled.forwardButtonIsDisabled || disabled.isAnimating"
         @click="stepForward"
       >
         <strong>&gt;</strong>
       </v-btn>
     </div>
-    <span class="text-sm">Animation Frame</span>
+    <span class="text-sm">{{ label }}</span>
   </div>
 </template>
 
@@ -27,6 +27,7 @@ export default {
     length: { type: Number, default: 1 },
     currentFrame: { type: Number, default: 0 },
     disabled: { type: Object, default: undefined },
+    label: { type: String, default: '' },
   },
   methods: {
     stepBack() {

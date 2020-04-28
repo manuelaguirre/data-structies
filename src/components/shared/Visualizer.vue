@@ -23,10 +23,9 @@
         name="list"
       >
         <g
-          v-for="(node, index) in nodes"
+          v-for="node in nodes"
           :key="node.id"
           class="node"
-          @click="select(index, node)"
         >
           <g
             v-for="key in node.keys"

@@ -16,19 +16,19 @@
     </div>
     <div class="flex buttons">
       <InsertInput
-        :disabled="isDisabled"
+        :disabled="isAnimating"
         @myEvent="insertInputEvent"
       />
       <DeleteInput
         :onlypop="onlypop"
-        :disabled="isDisabled"
+        :disabled="isAnimating"
         @myEvent="deleteInputEvent"
       />
     </div>
     <div class="visualizer-cont">
       <Visualizer
         :sequences="sequences"
-        :current="current"
+        :current="currentSequenceNumber"
         :current-frame="currentFrame"
       />
     </div>
@@ -37,10 +37,11 @@
         <HistoryButtons
           id="history.buttons"
           class="mx-4"
-          :current="current"
+          :current="currentSequenceNumber"
           :length="sequences.length"
           :disabled="historyButtonsAreDisabled"
-          @HistoryEvents="changeCurrent"
+          label="History"
+          @HistoryEvents="changeCurrentSequence"
         />
       </div>
       <div class="step-btn-container">
@@ -50,6 +51,7 @@
           :current-frame="currentFrame"
           :length="currentSequence ? currentSequence.frames.length : 0"
           :disabled="stepButtonsAreDisabled"
+          label="Animation"
           @HistoryEvents="changeCurrentFrame"
         />
       </div>
@@ -82,10 +84,10 @@ export default {
       maxHeap: new MaxHeap(),
       /** @type {Sequence[]} */
       sequencesList: [],
-      current: 0,
+      currentSequenceNumber: 0,
       currentFrame: 0,
       onlypop: true,
-      isDisabled: false,
+      isAnimating: false,
     };
   },
   computed: {
@@ -93,7 +95,7 @@ export default {
       return this.sequencesList;
     },
     currentSequence() {
-      return this.sequencesList[this.current];
+      return this.sequencesList[this.currentSequenceNumber];
     },
     stepButtonsAreDisabled() {
       if (!this.currentSequence) {
@@ -101,18 +103,17 @@ export default {
           backButtonIsDisabled: true, forwardButtonIsDisabled: true,
         };
       }
-      const backButtonIsDisabled = this.current <= 0 && this.currentFrame <= 0;
-      const forwardButtonIsDisabled = this.current >= this.sequences.length - 1
-             && this.currentFrame >= this.currentSequence.frames.length - 1;
-      return { backButtonIsDisabled, forwardButtonIsDisabled };
+      const backButtonIsDisabled = this.currentFrame <= 0;
+      const forwardButtonIsDisabled = this.currentFrame >= this.currentSequence.frames.length - 1;
+      return { backButtonIsDisabled, forwardButtonIsDisabled, isAnimating: this.isAnimating };
     },
     historyButtonsAreDisabled() {
       if (!this.sequencesList) {
         return { backButtonIsDisabled: true, forwardButtonIsDisabled: true };
       }
-      const backButtonIsDisabled = this.current <= 0;
-      const forwardButtonIsDisabled = this.current >= this.sequencesList.length - 1;
-      return { backButtonIsDisabled, forwardButtonIsDisabled };
+      const backButtonIsDisabled = this.currentSequenceNumber <= 0;
+      const forwardButtonIsDisabled = this.currentSequenceNumber >= this.sequencesList.length - 1;
+      return { backButtonIsDisabled, forwardButtonIsDisabled, isAnimating: this.isAnimating };
     },
   },
 
@@ -127,43 +128,41 @@ export default {
       this.addSequenceAsync(this.maxHeap.remove());
     },
     addSequenceAsync(frames) {
-      this.isDisabled = true;
+      this.isAnimating = true;
       const newSequence = new Sequence();
       newSequence.addFrame(frames.frames[0]);
       this.sequencesList.push(newSequence);
-      this.current = this.sequencesList.length - 1;
+      this.currentSequenceNumber = this.sequencesList.length - 1;
       this.currentFrame = 0;
       for (let i = 1; i < frames.frames.length; i += 1) {
         setTimeout(() => {
           newSequence.addFrame(frames.frames[i]);
           if (i === frames.frames.length - 1) {
-            this.isDisabled = false;
+            this.isAnimating = false;
           }
           this.currentFrame += 1;
           this.sequencesList = Object.assign(this.sequencesList);
-        }, i * 1000);
+        }, i * 500);
       }
     },
     changeCurrentFrame(event) {
       this.currentFrame += event;
       if (this.currentFrame < 0) {
-        this.changeCurrent(-1);
-        this.currentFrame = this.sequencesList[this.current].frames.length - 1;
-      }
-      if (this.currentFrame > this.sequencesList[this.current].frames.length - 1) {
-        this.changeCurrent(1);
         this.currentFrame = 0;
       }
+      if (this.currentFrame > this.sequencesList[this.currentSequenceNumber].frames.length - 1) {
+        this.currentFrame = this.sequencesList[this.currentSequenceNumber].frames.length - 1;
+      }
     },
-    changeCurrent(event) {
-      this.currentFrame = 0;
-      this.current += event;
-      if (this.current < 0) {
-        this.current = 0;
+    changeCurrentSequence(event) {
+      this.currentSequenceNumber += event;
+      if (this.currentSequenceNumber < 0) {
+        this.currentSequenceNumber = 0;
       }
-      if (this.current > this.sequencesList.length - 1) {
-        this.current = this.sequencesList.length - 1;
+      if (this.currentSequenceNumber > this.sequencesList.length - 1) {
+        this.currentSequenceNumber = this.sequencesList.length - 1;
       }
+      this.currentFrame = this.currentSequence.frames.length - 1;
     },
   },
 };
