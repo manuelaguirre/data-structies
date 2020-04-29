@@ -140,7 +140,7 @@ export default {
           }
           this.currentFrame += 1;
           this.sequencesList = Object.assign(this.sequencesList);
-        }, i * 500);
+        }, i * 100);
       }
     },
     changeCurrentFrame(event) {

@@ -160,6 +160,7 @@ export default class BTree {
             sequence.addFrame(new Frame(this.toJSON(this.root, this.root.values)));
         }
         // Start looking for the value to delete
+        console.log(this.root);
         this.deleteFromNode(this.root, parseInt(value), sequence);
         sequence.addFrame(new Frame(this.toJSON(this.root, [])));
         return sequence;
@@ -194,16 +195,16 @@ export default class BTree {
                         node.children[index].values[node.children[index].n - 1],
                         node.values[index],
                     ])));
-                    node.values[index] = node.children[index].values[node.children[index].n - 1];
-                    sequence.addFrame(new Frame(this.toJSON(this.root, [node.values[index]])));
-                    return this.deleteFromNode(node.children[index], node.values[index], sequence);
+                    node.values[index] = this.maxLeaf(node.children[index]);
+                    //TODO add sequence
+                    return this.deleteFromNode(node.children[index], node.values[index], sequence)
                 } else {
                     sequence.addFrame(new Frame(this.toJSON(this.root, [
                         node.children[index+1].values[0],
                         node.values[index],
                     ])));
-                    node.values[index] = node.children[index+1].values[0];
-                    sequence.addFrame(new Frame(this.toJSON(this.root, [node.values[index]])));
+                    node.values[index] = this.minLeaf(node.children[index + 1]);
+                    //TODO add sequence
                     return this.deleteFromNode(node.children[index+1], node.values[index], sequence);
                 }
             }
@@ -242,6 +243,33 @@ export default class BTree {
             node.children[nextNode], sequence);
         return this.deleteFromNode(node.children[index], value, sequence);
     }
+
+    /**
+     * returns the greatest value in the tree
+     * @param {BTreeNode} node  
+     * @returns {Number} 
+    */
+    maxLeaf(node) {
+        if (node.leaf) {
+            const maxValue = node.values[node.n - 1];
+            return maxValue;
+        } else {
+            return this.maxLeaf(node.children[node.n])
+        }
+    }
+    /**
+     * returns the minimum value in the tree
+     * @param {BTreeNode} node  
+     * @returns {Number} 
+    */
+   minLeaf(node) {
+    if (node.leaf) {
+    const minValue = node.values[0];
+        return minValue;
+    } else {
+        return this.minLeaf(node.children[0])
+    }
+}
 
     /**
      * Transfer one value from the origin to the target. O(1)
