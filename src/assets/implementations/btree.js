@@ -277,7 +277,7 @@ export default class BTree {
                 target.addChild(origin.deleteChild(origin.children.length-1), 0);
             }
             target.parent.highlighted = [target.parent.values[indexo]];
-            target.highlighted = [taget.values[0]];
+            target.highlighted = [target.values[0]];
             sequence.addFrame(new Frame(this.toJSON(this.root)));
         } else {
             target.parent.highlighted = [target.parent.values[indext]];
