@@ -190,21 +190,23 @@ export default class BTree {
                 if (node.children[index].n > this.order - 1) {
                     // Replace the target value for the higher of left node.
                     // Then delete that value from the child
+                    const predecessor = this.getMinMaxFromSubTree(node.children[index], 1);
                     sequence.addFrame(new Frame(this.toJSON(this.root, [
-                        node.children[index].values[node.children[index].n - 1],
+                        predecessor,
                         node.values[index],
                     ])));
-                    node.values[index] = node.children[index].values[node.children[index].n - 1];
-                    sequence.addFrame(new Frame(this.toJSON(this.root, [node.values[index]])));
-                    return this.deleteFromNode(node.children[index], node.values[index], sequence);
+                    node.values[index] = predecessor;
+                    sequence.addFrame(new Frame(this.toJSON(this.root, [predecessor])));
+                    return this.deleteFromNode(node.children[index], predecessor, sequence);
                 } else {
+                    const successor = this.getMinMaxFromSubTree(node.children[index+1], 0);
                     sequence.addFrame(new Frame(this.toJSON(this.root, [
-                        node.children[index+1].values[0],
+                        successor,
                         node.values[index],
                     ])));
-                    node.values[index] = node.children[index+1].values[0];
-                    sequence.addFrame(new Frame(this.toJSON(this.root, [node.values[index]])));
-                    return this.deleteFromNode(node.children[index+1], node.values[index], sequence);
+                    node.values[index] = successor;
+                    sequence.addFrame(new Frame(this.toJSON(this.root, [successor])));
+                    return this.deleteFromNode(node.children[index+1], successor, sequence);
                 }
             }
             // Children has not enough values to transfer. Do a merge
@@ -240,7 +242,7 @@ export default class BTree {
         this.mergeNodes(
             nextNode > 0 ? node.children[nextNode - 1] : node.children[nextNode + 1],
             node.children[nextNode], sequence);
-        return this.deleteFromNode(node.children[index], value, sequence);
+        return this.deleteFromNode(node.children[nextNode], value, sequence);
     }
 
     /**
@@ -308,6 +310,19 @@ export default class BTree {
             }
         }
         sequence.addFrame(new Frame(this.toJSON(this.root, valuesFrame)));
+    }
+
+    /**
+     * Get the lower or higher value in a sub-tree
+     * @param {BTreeNode} node 
+     * @param { 0 | 1 } max 1 for find max, 0 for min
+     * @returns {number}
+     */
+    getMinMaxFromSubTree(node, max) {
+        while (!node.leaf) {
+            node = node.children[max ? node.n : 0];
+        }
+        return node.values[max ? node.n - 1 : 0];
     }
 
     /**
