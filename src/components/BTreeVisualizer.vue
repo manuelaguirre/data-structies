@@ -21,8 +21,10 @@
     <div class="visualier-cont">
       <Visualizer
         :sequences="sequences"
+        :disabled="isAnimating"
         :current="currentSequenceNumber"
         :current-frame="currentFrame"
+        @reanimate="reanimate"
       />
     </div>
     <div class="arrow-button-container flex m-auto">
@@ -76,6 +78,7 @@ export default {
     return {
       /** @type {BTree} */
       bTree: null,
+      /** @type {Sequence[]} */
       sequencesList: [],
       currentSequenceNumber: 0,
       currentFrame: 0,
@@ -161,6 +164,23 @@ export default {
         this.currentSequenceNumber = this.sequencesList.length - 1;
       }
       this.currentFrame = this.currentSequence.frames.length - 1;
+    },
+    reanimate() {
+      const frames = [];
+      this.currentSequence.frames.forEach((f) => frames.push(f));
+      this.currentSequence.frames = [frames[0]];
+      this.currentFrame = 0;
+      this.isAnimating = true;
+      for (let i = 1; i < frames.length; i += 1) {
+        setTimeout(() => {
+          this.currentSequence.addFrame(frames[i]);
+          if (i === frames.length - 1) {
+            this.isAnimating = false;
+          }
+          this.currentFrame += 1;
+          this.sequencesList = Object.assign(this.sequencesList);
+        }, i * 500);
+      }
     },
   },
 };
