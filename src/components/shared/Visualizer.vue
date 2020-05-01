@@ -1,9 +1,10 @@
 <template>
   <div
     ref="cont"
-    class="flex view-container"
+    class="flex view-container justify-center"
   >
     <svg
+      ref="svg"
       class="svg"
     >
       <transition-group
@@ -74,8 +75,9 @@ export default {
   },
   data() {
     return {
+      svgWidth: undefined,
       margin: {
-        top: 20, right: 50, bottom: 30, left: 200,
+        top: 20, right: 50, bottom: 30, left: 0,
       },
       settings: {
         strokeColor: '#29B5FF',
@@ -128,12 +130,19 @@ export default {
       return undefined;
     },
     tree() {
-      return d3.tree().size([1000, this.settings.width - 300]).separation(() => (this.settings.keyCellWidth * 2));
+      return d3.tree().size([this.svgWidth, this.svgWidth - 300]).separation(() => (this.settings.keyCellWidth * 2));
     },
-    getWith() {
-      return this.$refs && this.$refs.cont ? this.$refs.cont.clientWidth : 800;
-    },
+
   },
+
+  mounted() {
+    this.addSizingListeners();
+  },
+
+  beforeDestroy() {
+    this.removeListeners();
+  },
+
   methods: {
     getSVGParams(key, position, keys) {
       return {
@@ -183,6 +192,20 @@ export default {
         };
       });
     },
+    addSizingListeners() {
+      const wrapper = this.$el;
+      this.svgWidth = wrapper.clientWidth;
+      window.onresize = this.handleSVGParentResize;
+    },
+    handleSVGParentResize() {
+      const wrapper = this.$el;
+      this.svgWidth = wrapper.clientWidth;
+    },
+    removeListeners() {
+      window.onresize = null;
+    },
+
+
   },
 
 };
@@ -191,7 +214,6 @@ export default {
 <style>
   .view-container {
     height: 100%;
-    flex-direction: column;
     align-items: center;
   }
   .svg {
