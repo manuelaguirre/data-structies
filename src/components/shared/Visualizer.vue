@@ -130,7 +130,7 @@ export default {
       return undefined;
     },
     tree() {
-      return d3.tree().size([this.svgWidth, this.svgWidth - 300]).separation(() => (this.settings.keyCellWidth * 2));
+      return d3.tree().size([this.svgWidth, this.settings.width - 300]).separation(() => (this.settings.keyCellWidth * 2));
     },
 
   },
