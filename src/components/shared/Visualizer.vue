@@ -1,7 +1,7 @@
 <template>
   <div
     ref="cont"
-    class="flex view-container justify-center"
+    class="flex view-container justify-center h-64"
   >
     <svg
       ref="svg"
@@ -107,6 +107,7 @@ export default {
       },
     };
   },
+
   computed: {
     root() {
       /** @type {Sequence} */
@@ -204,10 +205,7 @@ export default {
     removeListeners() {
       window.onresize = null;
     },
-
-
   },
-
 };
 </script>
 
