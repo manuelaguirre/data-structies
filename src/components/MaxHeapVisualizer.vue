@@ -17,9 +17,9 @@
         class="button"
         color="primary"
         :disabled="isAnimating"
-        @click="reanimate"
+        @click="replay"
       >
-        Reanimate
+        Replay <v-icon>mdi-play</v-icon>
       </v-btn>
       <DeleteInput
         :onlypop="onlypop"
@@ -135,7 +135,7 @@ export default {
       this.currentSequenceNumber = this.sequencesList.length - 1;
       this.addSequenceAsync(this.maxHeap.delete());
     },
-    reanimate() {
+    replay() {
       const frames = [];
       this.currentSequence.frames.forEach((f) => frames.push(f));
       this.currentSequence.frames = [];
