@@ -13,10 +13,14 @@
         :disabled="isAnimating"
         @myEvent="insertInputEvent"
       />
-      <Reanimate
+      <v-btn
+        class="button"
+        color="primary"
         :disabled="isAnimating"
-        @reanimate="reanimate"
-      />
+        @click="reanimate"
+      >
+        Reanimate
+      </v-btn>
       <DeleteInput
         :disabled="isAnimating"
         @myEvent="deleteInputEvent"
@@ -62,7 +66,6 @@ import Router from 'vue-router';
 import BTree, { BTreeNode } from '../assets/implementations/btree';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
-import Reanimate from './shared/Reanimate.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
 import Sequence from '../assets/visualizer/frame';
@@ -76,7 +79,6 @@ export default {
     DeleteInput,
     Visualizer,
     HistoryButtons,
-    Reanimate,
   },
   data() {
     return {
@@ -125,24 +127,32 @@ export default {
       router.back();
     },
     insertInputEvent(event) {
+      const newSequence = new Sequence();
+      this.sequencesList.push(newSequence);
+      this.currentSequenceNumber = this.sequencesList.length - 1;
       this.addSequenceAsync(this.bTree.insert(event));
     },
     deleteInputEvent(event) {
+      const newSequence = new Sequence();
+      this.sequencesList.push(newSequence);
+      this.currentSequenceNumber = this.sequencesList.length - 1;
       this.addSequenceAsync(this.bTree.delete(event));
     },
 
-
-    addSequenceAsync(frames) {
+    reanimate() {
+      const frames = [];
+      this.currentSequence.frames.forEach((f) => frames.push(f));
+      this.currentSequence.frames = [];
+      this.addSequenceAsync({ frames });
+    },
+    addSequenceAsync(sequence) {
       this.isAnimating = true;
-      const newSequence = new Sequence();
-      newSequence.addFrame(frames.frames[0]);
-      this.sequencesList.push(newSequence);
-      this.currentSequenceNumber = this.sequencesList.length - 1;
+      this.currentSequence.addFrame(sequence.frames[0]);
       this.currentFrame = 0;
-      for (let i = 1; i < frames.frames.length; i += 1) {
+      for (let i = 1; i < sequence.frames.length; i += 1) {
         setTimeout(() => {
-          newSequence.addFrame(frames.frames[i]);
-          if (i === frames.frames.length - 1) {
+          this.currentSequence.addFrame(sequence.frames[i]);
+          if (i === sequence.frames.length - 1) {
             this.isAnimating = false;
           }
           this.currentFrame += 1;
@@ -168,23 +178,6 @@ export default {
         this.currentSequenceNumber = this.sequencesList.length - 1;
       }
       this.currentFrame = this.currentSequence.frames.length - 1;
-    },
-    reanimate() {
-      const frames = [];
-      this.currentSequence.frames.forEach((f) => frames.push(f));
-      this.currentSequence.frames = [frames[0]];
-      this.currentFrame = 0;
-      this.isAnimating = true;
-      for (let i = 1; i < frames.length; i += 1) {
-        setTimeout(() => {
-          this.currentSequence.addFrame(frames[i]);
-          if (i === frames.length - 1) {
-            this.isAnimating = false;
-          }
-          this.currentFrame += 1;
-          this.sequencesList = Object.assign(this.sequencesList);
-        }, i * 500);
-      }
     },
   },
 };

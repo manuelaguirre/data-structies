@@ -13,6 +13,14 @@
         :disabled="isAnimating"
         @myEvent="insertInputEvent"
       />
+      <v-btn
+        class="button"
+        color="primary"
+        :disabled="isAnimating"
+        @click="reanimate"
+      >
+        Reanimate
+      </v-btn>
       <DeleteInput
         :onlypop="onlypop"
         :disabled="isAnimating"
@@ -116,22 +124,31 @@ export default {
       router.back();
     },
     insertInputEvent(event) {
+      const newSequence = new Sequence();
+      this.sequencesList.push(newSequence);
+      this.currentSequenceNumber = this.sequencesList.length - 1;
       this.addSequenceAsync(this.minHeap.insert(event));
     },
     deleteInputEvent() {
-      this.addSequenceAsync(this.minHeap.remove());
-    },
-    addSequenceAsync(frames) {
-      this.isAnimating = true;
       const newSequence = new Sequence();
-      newSequence.addFrame(frames.frames[0]);
       this.sequencesList.push(newSequence);
       this.currentSequenceNumber = this.sequencesList.length - 1;
+      this.addSequenceAsync(this.minHeap.delete());
+    },
+    reanimate() {
+      const frames = [];
+      this.currentSequence.frames.forEach((f) => frames.push(f));
+      this.currentSequence.frames = [];
+      this.addSequenceAsync({ frames });
+    },
+    addSequenceAsync(sequence) {
+      this.isAnimating = true;
+      this.currentSequence.addFrame(sequence.frames[0]);
       this.currentFrame = 0;
-      for (let i = 1; i < frames.frames.length; i += 1) {
+      for (let i = 1; i < sequence.frames.length; i += 1) {
         setTimeout(() => {
-          newSequence.addFrame(frames.frames[i]);
-          if (i === frames.frames.length - 1) {
+          this.currentSequence.addFrame(sequence.frames[i]);
+          if (i === sequence.frames.length - 1) {
             this.isAnimating = false;
           }
           this.currentFrame += 1;
