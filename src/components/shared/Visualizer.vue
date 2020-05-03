@@ -71,9 +71,7 @@ export default {
     },
     current: { type: Number, default: 0 },
     currentFrame: { type: Number, default: 0 },
-
   },
-
   data() {
     return {
       margin: {
@@ -107,7 +105,6 @@ export default {
       },
     };
   },
-
   computed: {
     root() {
       /** @type {Sequence} */
@@ -137,7 +134,6 @@ export default {
       return this.$refs && this.$refs.cont ? this.$refs.cont.clientWidth : 800;
     },
   },
-
   methods: {
     getSVGParams(key, position, keys) {
       return {
