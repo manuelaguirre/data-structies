@@ -13,6 +13,10 @@
         :disabled="isAnimating"
         @myEvent="insertInputEvent"
       />
+      <Reanimate
+        :disabled="isAnimating"
+        @reanimate="reanimate"
+      />
       <DeleteInput
         :disabled="isAnimating"
         @myEvent="deleteInputEvent"
@@ -21,10 +25,8 @@
     <div class="visualier-cont">
       <Visualizer
         :sequences="sequences"
-        :disabled="isAnimating"
         :current="currentSequenceNumber"
         :current-frame="currentFrame"
-        @reanimate="reanimate"
       />
     </div>
     <div class="arrow-button-container flex m-auto">
@@ -60,6 +62,7 @@ import Router from 'vue-router';
 import BTree, { BTreeNode } from '../assets/implementations/btree';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
+import Reanimate from './shared/Reanimate.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
 import Sequence from '../assets/visualizer/frame';
@@ -73,6 +76,7 @@ export default {
     DeleteInput,
     Visualizer,
     HistoryButtons,
+    Reanimate,
   },
   data() {
     return {

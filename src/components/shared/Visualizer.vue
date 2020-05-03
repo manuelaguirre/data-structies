@@ -3,14 +3,6 @@
     ref="cont"
     class="flex view-container"
   >
-    <v-btn
-      class="button"
-      color="primary"
-      :disabled="disabled"
-      @click="reanimate"
-    >
-      reanimate
-    </v-btn>
     <svg
       class="svg"
     >
@@ -79,7 +71,6 @@ export default {
     },
     current: { type: Number, default: 0 },
     currentFrame: { type: Number, default: 0 },
-    disabled: { type: Boolean },
   },
   data() {
     return {
@@ -144,9 +135,6 @@ export default {
     },
   },
   methods: {
-    reanimate() {
-      this.$emit('reanimate', true);
-    },
     getSVGParams(key, position, keys) {
       return {
         width: this.settings.keyCellWidth + (key.value.toString().length - 1) * 3,

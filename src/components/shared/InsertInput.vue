@@ -4,7 +4,6 @@
       class="text-field"
       label="Insert a Value"
       :value="insertedValue"
-      :disabled="disabled"
       @input="insertedValue = $event"
       @keyup.enter="insertValue"
     />
@@ -32,7 +31,7 @@ export default {
   },
   methods: {
     insertValue() {
-      if (this.insertedValue !== '') {
+      if (this.insertedValue !== '' && !this.disabled) {
         this.$emit('myEvent', this.insertedValue);
         this.insertedValue = '';
       }

@@ -19,7 +19,6 @@
           src="https://firebasestorage.googleapis.com/v0/b/structies.appspot.com/o/structies-logo.png?alt=media&token=14401c07-2ec3-4630-9e0d-ae70c80b4bae"
         />
       </router-link>
-      <v-toolbar-title>Structies</v-toolbar-title>
 
       <v-spacer />
     </v-toolbar>
