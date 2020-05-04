@@ -13,14 +13,6 @@
         :disabled="isAnimating"
         @myEvent="insertInputEvent"
       />
-      <v-btn
-        class="button"
-        color="primary"
-        :disabled="isAnimating"
-        @click="replay"
-      >
-        Replay <v-icon>mdi-play</v-icon>
-      </v-btn>
       <DeleteInput
         :onlypop="onlypop"
         :disabled="isAnimating"
@@ -44,6 +36,14 @@
           @HistoryEvents="changeCurrentSequence"
         />
       </div>
+      <v-btn
+        class="button"
+        color="primary"
+        :disabled="isAnimating"
+        @click="replay"
+      >
+        Replay <v-icon>mdi-play</v-icon>
+      </v-btn>
       <div class="step-btn-container">
         <HistoryButtons
           id="step-buttons"
