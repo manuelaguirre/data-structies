@@ -26,13 +26,11 @@
         @myEvent="deleteInputEvent"
       />
     </div>
-    <div class="visualier-cont">
-      <Visualizer
-        :sequences="sequences"
-        :current="currentSequenceNumber"
-        :current-frame="currentFrame"
-      />
-    </div>
+    <Visualizer
+      :sequences="sequences"
+      :current="currentSequenceNumber"
+      :current-frame="currentFrame"
+    />
     <div class="arrow-button-container flex m-auto">
       <div class="history-btn-container">
         <HistoryButtons
@@ -203,9 +201,4 @@ export default {
     height: 100vh;
     flex-direction: column;
   }
-  .visualier-cont {
-    flex: 1;
-  }
-
-
 </style>
