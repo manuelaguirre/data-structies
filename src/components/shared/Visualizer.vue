@@ -199,8 +199,7 @@ export default {
       window.onresize = this.handleSVGParentResize;
     },
     handleSVGParentResize() {
-      const wrapper = this.$el;
-      this.svgWidth = wrapper.clientWidth;
+      this.svgWidth = this.$el.clientWidth;
     },
     removeListeners() {
       window.onresize = null;
