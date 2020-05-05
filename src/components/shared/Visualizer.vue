@@ -112,7 +112,6 @@ export default {
     root() {
       /** @type {Sequence} */
       const sequence = this.sequences.length ? this.sequences[this.current] : null;
-      // TODO: Show all the frames in a sequence
       const root = sequence ? sequence.frames[this.currentFrame].tree : null;
       return root ? this.tree(d3.hierarchy(root)) : null;
     },
