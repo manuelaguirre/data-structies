@@ -3,7 +3,7 @@
     <v-text-field
       v-if="!onlypop"
       color="error"
-      label="Delete a Value"
+      placeholder="Delete a Value"
       :value="deletedValue"
       @input="deletedValue = $event"
       @keyup.enter="deleteValue"

@@ -70,6 +70,7 @@ import Sequence from '../assets/visualizer/frame';
 
 const router = new Router();
 
+// TODO: Make one tree visualizer handler
 export default {
   name: 'BTreeVisualizer',
   components: {
@@ -143,7 +144,6 @@ export default {
       this.currentSequenceNumber = this.sequencesList.length - 1;
       this.addSequenceAsync(this.bTree.delete(event));
     },
-
     replay() {
       const frames = [];
       this.currentSequence.frames.forEach((f) => frames.push(f));

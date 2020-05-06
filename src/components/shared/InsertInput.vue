@@ -2,7 +2,7 @@
   <div class="flex button-container">
     <v-text-field
       class="text-field"
-      label="Insert a Value"
+      placeholder="Insert a Value (Ex: 10,20)"
       :value="insertedValue"
       @input="insertedValue = $event"
       @keyup.enter="insertValue"
