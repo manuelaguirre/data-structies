@@ -85,7 +85,7 @@ export default {
       maxHeap: new MaxHeap(),
       /** @type {Sequence[]} */
       sequencesList: [],
-      insertQueue: [],
+      insertionQueue: [],
       currentSequenceNumber: 0,
       currentFrame: 0,
       onlypop: true,
@@ -124,22 +124,26 @@ export default {
       router.back();
     },
     insertInputEvent(event) {
-      event.split(',').forEach((value) => this.insertQueue.push(value));
+      event.split(',').forEach((value) => {
+        if (value) {
+          this.insertionQueue.push(value);
+        }
+      });
       this.dequeueInsert();
     },
     dequeueInsert() {
       const newSequence = new Sequence();
       this.sequencesList.push(newSequence);
       this.currentSequenceNumber = this.sequencesList.length - 1;
-      const sequence = this.maxHeap.insert(this.insertQueue[0]);
-      this.insertQueue.splice(0, 1);
+      const sequence = this.maxHeap.insert(this.insertionQueue[0]);
+      this.insertionQueue.splice(0, 1);
       this.addSequenceAsync(sequence);
     },
     deleteInputEvent() {
       const newSequence = new Sequence();
       this.sequencesList.push(newSequence);
       this.currentSequenceNumber = this.sequencesList.length - 1;
-      this.addSequenceAsync(this.maxHeap.delete());
+      this.addSequenceAsync(this.maxHeap.remove());
     },
     replay() {
       const frames = [];
@@ -158,7 +162,7 @@ export default {
           this.sequencesList = Object.assign(this.sequencesList);
           if (i === sequence.frames.length - 1) {
             this.isAnimating = false;
-            if (this.insertQueue.length > 0) {
+            if (this.insertionQueue.length > 0) {
               this.dequeueInsert();
             }
           }

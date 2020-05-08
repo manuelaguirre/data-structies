@@ -85,7 +85,7 @@ export default {
       bTree: null,
       /** @type {Sequence[]} */
       sequencesList: [],
-      insertQueue: [],
+      insertionQueue: [],
       currentSequenceNumber: 0,
       currentFrame: 0,
       isAnimating: false,
@@ -127,15 +127,19 @@ export default {
       router.back();
     },
     insertInputEvent(event) {
-      event.split(',').forEach((value) => this.insertQueue.push(value));
+      event.split(',').forEach((value) => {
+        if (value) {
+          this.insertionQueue.push(value);
+        }
+      });
       this.dequeueInsert();
     },
     dequeueInsert() {
       const newSequence = new Sequence();
       this.sequencesList.push(newSequence);
       this.currentSequenceNumber = this.sequencesList.length - 1;
-      const sequence = this.bTree.insert(this.insertQueue[0]);
-      this.insertQueue.splice(0, 1);
+      const sequence = this.bTree.insert(this.insertionQueue[0]);
+      this.insertionQueue.splice(0, 1);
       this.addSequenceAsync(sequence);
     },
     deleteInputEvent(event) {
@@ -161,7 +165,7 @@ export default {
           this.sequencesList = Object.assign(this.sequencesList);
           if (i === sequence.frames.length - 1) {
             this.isAnimating = false;
-            if (this.insertQueue.length > 0) {
+            if (this.insertionQueue.length > 0) {
               this.dequeueInsert();
             }
           }
