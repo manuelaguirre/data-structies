@@ -56,7 +56,7 @@ export default class MaxHeap {
      * Return sequence with Frame array to visualize the operation
      * @returns {Sequence}
      */
-    remove() {
+    delete() {
         const sequence = new Sequence();
         /* Smallest element is at the index 1 in the heap array */
         sequence.addFrame(new Frame(this.toJSON([1])));
