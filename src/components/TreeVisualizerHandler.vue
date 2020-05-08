@@ -24,7 +24,7 @@
       :current="currentSequenceNumber"
       :current-frame="currentFrame"
     />
-    <div class="arrow-button-container flex m-auto">
+    <div class="arrow-button-container flex mx-auto mt-2">
       <div class="history-btn-container">
         <HistoryButtons
           id="history.buttons"
