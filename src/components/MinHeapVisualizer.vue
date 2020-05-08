@@ -71,6 +71,7 @@ import Sequence from '../assets/visualizer/frame';
 
 const router = new Router();
 
+// TODO: Make one tree visualizer handler
 export default {
   name: 'MinHeapVisualizer',
   components: {
@@ -84,6 +85,7 @@ export default {
       minHeap: new MinHeap(),
       /** @type {Sequence[]} */
       sequencesList: [],
+      insertionQueue: [],
       currentSequenceNumber: 0,
       currentFrame: 0,
       onlypop: true,
@@ -122,16 +124,26 @@ export default {
       router.back();
     },
     insertInputEvent(event) {
+      event.split(',').forEach((value) => {
+        if (value) {
+          this.insertionQueue.push(value);
+        }
+      });
+      this.dequeueInsert();
+    },
+    dequeueInsert() {
       const newSequence = new Sequence();
       this.sequencesList.push(newSequence);
       this.currentSequenceNumber = this.sequencesList.length - 1;
-      this.addSequenceAsync(this.minHeap.insert(event));
+      const sequence = this.minHeap.insert(this.insertionQueue[0]);
+      this.insertionQueue.splice(0, 1);
+      this.addSequenceAsync(sequence);
     },
     deleteInputEvent() {
       const newSequence = new Sequence();
       this.sequencesList.push(newSequence);
       this.currentSequenceNumber = this.sequencesList.length - 1;
-      this.addSequenceAsync(this.minHeap.delete());
+      this.addSequenceAsync(this.minHeap.remove());
     },
     replay() {
       const frames = [];
@@ -146,11 +158,14 @@ export default {
       for (let i = 1; i < sequence.frames.length; i += 1) {
         setTimeout(() => {
           this.currentSequence.addFrame(sequence.frames[i]);
-          if (i === sequence.frames.length - 1) {
-            this.isAnimating = false;
-          }
           this.currentFrame += 1;
           this.sequencesList = Object.assign(this.sequencesList);
+          if (i === sequence.frames.length - 1) {
+            this.isAnimating = false;
+            if (this.insertionQueue.length > 0) {
+              this.dequeueInsert();
+            }
+          }
         }, i * 500);
       }
     },

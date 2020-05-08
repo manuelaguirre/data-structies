@@ -50,7 +50,7 @@ export class BTreeNode {
         }
         let pos = 0;
         // Add frame fot each value compared
-        if (this.n > 0 && sequence) {
+        if (this.n > 1 && sequence) {
             this.highlighted = [this.values[pos]];
             sequence.addFrame(new Frame(this.tree.toJSON(this.tree.root)));
         }
