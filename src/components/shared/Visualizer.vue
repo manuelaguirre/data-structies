@@ -152,8 +152,8 @@ export default {
         top: 20,
         right: 0,
         bottom: 0,
-        left: this.root.x - this.leftmostLeaf.x
-        + 2.5 * this.settings.keyCellWidth,
+        left: this.root ? this.root.x - this.leftmostLeaf.x
+        + 2.5 * this.settings.keyCellWidth : 0,
       };
     },
   },
