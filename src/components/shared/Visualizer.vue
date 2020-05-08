@@ -237,5 +237,3 @@ export default {
     align-items: center;
   }
 </style>
-
-//problema de render inicial y altura
