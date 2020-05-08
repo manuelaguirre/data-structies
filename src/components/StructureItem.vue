@@ -13,7 +13,7 @@
       >
     </div>
     <h4 class="p-4">
-      <router-link :to="'/structure/' + dataStructure.code">
+      <router-link :to="'/structure/' + dataStructure.structureType + '/' + dataStructure.code">
         {{ dataStructure.name }}
       </router-link>
     </h4>
@@ -29,6 +29,7 @@ export default {
       name: String,
       imageUrl: String,
       code: String,
+      structureType: String,
     },
   },
 };

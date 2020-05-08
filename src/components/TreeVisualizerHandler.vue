@@ -1,11 +1,11 @@
 <template>
   <div
-    id="max-heap-visualizer"
+    id="tree-visualizer-handler"
     class="flex tree-container"
   >
     <div class="title">
       <h1 class="name">
-        Structure: Max Heap
+        Structure: {{ title }}
       </h1>
     </div>
     <div class="flex buttons">
@@ -14,8 +14,8 @@
         @myEvent="insertInputEvent"
       />
       <DeleteInput
-        :onlypop="onlypop"
         :disabled="isAnimating"
+        :onlypop="onlypop"
         @myEvent="deleteInputEvent"
       />
     </div>
@@ -62,18 +62,19 @@
 <script>
 
 import Router from 'vue-router';
-import MaxHeap from '../assets/implementations/maxheap';
 import InsertInput from './shared/InsertInput.vue';
 import DeleteInput from './shared/DeleteInput.vue';
 import Visualizer from './shared/Visualizer.vue';
 import HistoryButtons from './shared/HistoryButtons.vue';
 import Sequence from '../assets/visualizer/frame';
+import MaxHeap from '../assets/implementations/maxheap';
+import MinHeap from '../assets/implementations/minheap';
+import BTree, { BTreeNode } from '../assets/implementations/btree';
 
 const router = new Router();
 
-// TODO: Make one tree visualizer handler
 export default {
-  name: 'MaxHeapVisualizer',
+  name: 'TreeVisualizerHandler',
   components: {
     InsertInput,
     DeleteInput,
@@ -82,7 +83,8 @@ export default {
   },
   data() {
     return {
-      maxHeap: new MaxHeap(),
+      /** @type {BTree | MaxHeap | MinHeap} */
+      tree: null,
       /** @type {Sequence[]} */
       sequencesList: [],
       insertionQueue: [],
@@ -90,6 +92,7 @@ export default {
       currentFrame: 0,
       onlypop: true,
       isAnimating: false,
+      title: '',
     };
   },
   computed: {
@@ -118,7 +121,29 @@ export default {
       return { backButtonIsDisabled, forwardButtonIsDisabled, isAnimating: this.isAnimating };
     },
   },
-
+  mounted() {
+    switch (this.$route.params.code) {
+      case 'min-heap':
+        this.tree = new MinHeap();
+        this.title = 'Min Heap';
+        this.onlypop = true;
+        return;
+      case 'max-heap':
+        this.tree = new MaxHeap();
+        this.title = 'Max Heap';
+        this.onlypop = true;
+        return;
+      case 'b-tree':
+        this.tree = new BTree(2);
+        this.onlypop = false;
+        this.title = 'B Tree';
+        this.tree.root = new BTreeNode(true);
+        this.tree.root.tree = this.tree;
+        return;
+      default:
+        this.$router.push('/');
+    }
+  },
   methods: {
     goBack() {
       router.back();
@@ -135,15 +160,15 @@ export default {
       const newSequence = new Sequence();
       this.sequencesList.push(newSequence);
       this.currentSequenceNumber = this.sequencesList.length - 1;
-      const sequence = this.maxHeap.insert(this.insertionQueue[0]);
+      const sequence = this.tree.insert(this.insertionQueue[0]);
       this.insertionQueue.splice(0, 1);
       this.addSequenceAsync(sequence);
     },
-    deleteInputEvent() {
+    deleteInputEvent(event) {
       const newSequence = new Sequence();
       this.sequencesList.push(newSequence);
       this.currentSequenceNumber = this.sequencesList.length - 1;
-      this.addSequenceAsync(this.maxHeap.remove());
+      this.addSequenceAsync(this.tree.delete(event));
     },
     replay() {
       const frames = [];
@@ -191,7 +216,8 @@ export default {
   },
 };
 </script>
-=
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .structies-button:hover {
     background-color:#3c48fa;

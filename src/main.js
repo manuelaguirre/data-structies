@@ -3,10 +3,7 @@ import VueRouter from 'vue-router';
 import vuetify from './plugins/vuetify';
 import App from './App.vue';
 import MainMenu from './components/MainMenu.vue';
-import BTreeVisualizer from './components/BTreeVisualizer.vue';
-import MinHeapVisualizer from './components/MinHeapVisualizer.vue';
-import MaxHeapVisualizer from './components/MaxHeapVisualizer.vue';
-import LineChartExample from './components/mock/LineChartExample.vue';
+import TreeVisualizerHandler from './components/TreeVisualizerHandler.vue';
 import './assets/css/tailwind.css';
 
 Vue.config.productionTip = false;
@@ -24,11 +21,10 @@ Vue.use(VueRouter);
 // `Vue.extend()`, or just a component options object.
 // We'll talk about nested routes later.
 const routes = [
-  { path: '/structure/b-tree', component: BTreeVisualizer },
-  { path: '/structure/min-heap', component: MinHeapVisualizer },
-  { path: '/structure/max-heap', component: MaxHeapVisualizer },
+  { path: '/structure/tree/:code', component: TreeVisualizerHandler },
   { path: '/', component: MainMenu },
-  { path: '/linechart', component: LineChartExample }];
+  { path: '*', component: MainMenu },
+];
 
 // 3. Create the router instance and pass the `routes` option
 // You can pass in additional options here, but let's
