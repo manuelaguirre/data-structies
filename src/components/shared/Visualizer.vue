@@ -1,11 +1,13 @@
 <template>
   <div
     ref="cont"
-    class="flex view-container justify-center h-64"
+    class="view-container overflow-auto"
   >
     <svg
       ref="svg"
-      class="svg"
+      class="svg m-auto"
+      :width="(treeWidth + 5 * settings.keyCellWidth).toString() + 'px'"
+      :height="(treeHeight+ margin.top).toString() + 'px'"
     >
       <transition-group
         tag="g"
@@ -76,10 +78,8 @@ export default {
   data() {
     return {
       svgWidth: undefined,
-      margin: {
-        top: 20, right: 50, bottom: 30, left: 0,
-      },
       settings: {
+        overflowX: 'hidden',
         strokeColor: '#29B5FF',
         width: '100',
         keyCellWidth: 38,
@@ -130,9 +130,32 @@ export default {
       return undefined;
     },
     tree() {
-      return d3.tree().size([this.svgWidth, this.settings.width - 300]).separation(() => (this.settings.keyCellWidth * 2));
+      return d3.tree().nodeSize([this.settings.keyCellWidth, -this.settings.keyCellHeight * 2])
+        .separation((a, b) => (((a.data.leaves.keys.length + b.data.leaves.keys.length)) / 2 + (a.parent === b.parent ? 0.5 : 1)));
     },
-
+    leftmostLeaf() {
+      const leaves = this.root ? this.root.leaves() : undefined;
+      return leaves ? leaves[0] : undefined;
+    },
+    rightmostLeaf() {
+      const leaves = this.root ? this.root.leaves() : undefined;
+      return leaves ? leaves[leaves.length - 1] : undefined;
+    },
+    treeWidth() {
+      return (this.rightmostLeaf && this.leftmostLeaf) ? this.rightmostLeaf.x - this.leftmostLeaf.x : 380;
+    },
+    treeHeight() {
+      return this.root ? (this.leftmostLeaf.depth + 1) * 2 * this.settings.keyCellHeight : 0;
+    },
+    margin() {
+      return {
+        top: 20,
+        right: 0,
+        bottom: 0,
+        left: this.root ? this.root.x - this.leftmostLeaf.x
+        + 2.5 * this.settings.keyCellWidth : 0,
+      };
+    },
   },
 
   mounted() {
@@ -142,6 +165,7 @@ export default {
   beforeDestroy() {
     this.removeListeners();
   },
+
 
   methods: {
     getSVGParams(key, position, keys) {
@@ -209,11 +233,7 @@ export default {
 
 <style>
   .view-container {
-    height: 100%;
+    height: 600px;
     align-items: center;
-  }
-  .svg {
-    width: 100%;
-    height: 100%;
   }
 </style>
