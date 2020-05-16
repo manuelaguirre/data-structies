@@ -25,11 +25,11 @@
       :current-frame-number="currentFrame"
       :tree-type="$route.params.code"
     />
-    <div class="arrow-button-container flex mx-auto my-2">
+    <div class="arrow-button-container flex flex-column mx-auto my-2">
       <div class="history-btn-container">
         <HistoryButtons
           id="history.buttons"
-          class="mx-4"
+          class="mx-4 mb-2"
           :current="currentSequenceNumber"
           :length="sequences.length"
           :disabled="historyButtonsAreDisabled"
@@ -38,7 +38,7 @@
         />
       </div>
       <v-btn
-        class="button"
+        class="button mb-4"
         color="primary"
         :disabled="isAnimating || sequences.length < 1"
         @click="replay"
@@ -48,7 +48,7 @@
       <div class="step-btn-container">
         <HistoryButtons
           id="step-buttons"
-          class="mx-4"
+          class="mx-4 mb-2"
           :current-frame="currentFrame"
           :length="currentSequence ? currentSequence.frames.length : 0"
           :disabled="stepButtonsAreDisabled"
@@ -222,6 +222,8 @@ export default {
 <style scoped>
   .name {
     font-size: 2rem;
+    line-height: 2rem;
+    height: fit-content;
   }
   .structies-button:hover {
     background-color:#3c48fa;
@@ -237,15 +239,17 @@ export default {
   }
   .tree-container {
     width: 100%;
-    height: 90vh;
     flex-direction: column;
   }
   @media (min-width: 850px) {
     .name {
       font-size: 3rem;
     }
-    .buttons {
+    .buttons, .arrow-button-container {
       flex-direction: row !important;
+    }
+    .tree-container {
+      height: 90vh;
     }
   }
 </style>
