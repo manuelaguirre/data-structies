@@ -8,7 +8,7 @@
         Structure: {{ title }}
       </h1>
     </div>
-    <div class="flex buttons">
+    <div class="flex flex-column align-center buttons">
       <InsertInput
         :disabled="isAnimating"
         @myEvent="insertInputEvent"
@@ -40,7 +40,7 @@
       <v-btn
         class="button"
         color="primary"
-        :disabled="isAnimating"
+        :disabled="isAnimating || sequences.length < 1"
         @click="replay"
       >
         Replay <v-icon>mdi-play</v-icon>
@@ -220,6 +220,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .name {
+    font-size: 2rem;
+  }
   .structies-button:hover {
     background-color:#3c48fa;
   }
@@ -230,12 +233,19 @@ export default {
   }
   .buttons {
     place-content: space-around;
-
     flex: 0 0 auto;
   }
   .tree-container {
     width: 100%;
     height: 90vh;
     flex-direction: column;
+  }
+  @media (min-width: 850px) {
+    .name {
+      font-size: 3rem;
+    }
+    .buttons {
+      flex-direction: row !important;
+    }
   }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex button-container align-center">
+  <div class="flex button-container align-center justify-center">
     <v-text-field
       v-if="!onlypop"
       color="error"
