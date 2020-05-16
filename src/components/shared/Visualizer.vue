@@ -72,8 +72,9 @@ export default {
       type: Array,
       default: () => [new Sequence()],
     },
-    current: { type: Number, default: 0 },
-    currentFrame: { type: Number, default: 0 },
+    currentSequenceNumber: { type: Number, default: 0 },
+    currentFrameNumber: { type: Number, default: 0 },
+    treeType: { type: String, default: undefined },
   },
   data() {
     return {
@@ -111,9 +112,14 @@ export default {
   computed: {
     root() {
       /** @type {Sequence} */
-      const sequence = this.sequences.length ? this.sequences[this.current] : null;
-      const root = sequence ? sequence.frames[this.currentFrame].tree : null;
+      const root = this.currentFrame ? this.currentFrame.tree : null;
       return root ? this.tree(d3.hierarchy(root)) : null;
+    },
+    currentFrame() {
+      return this.currentSequence ? this.currentSequence.frames[this.currentFrameNumber] : null;
+    },
+    currentSequence() {
+      return this.sequences.length ? this.sequences[this.currentSequenceNumber] : null;
     },
     nodes() {
       if (this.root) {
@@ -202,12 +208,25 @@ export default {
         };
       });
     },
+    getLinkPosition(key, parent) {
+      let i = 0;
+      while (i < parent.data.leaves.keys.length && key > parent.data.leaves.keys[i].value) {
+        i += 1;
+      }
+      return i;
+    },
     getLinks(descendants) {
       return descendants.slice(1).map((d, i) => {
         const x = d.x + this.margin.left;
-        const parentx = this.margin.left + d.parent.x;
+        let parentx = this.margin.left + d.parent.x;
+        let parenty = this.margin.top - d.parent.y;
+
+        if (this.treeType === 'b-tree') {
+          const position = this.getLinkPosition(d.data.leaves.keys[0].value, d.parent);
+          parentx += ((position * this.settings.keyCellWidth) - (d.parent.data.leaves.keys.length * (this.settings.keyCellWidth / 2)));
+          parenty += this.settings.keyCellHeight / 2;
+        }
         const y = this.margin.top - d.y;
-        const parenty = this.margin.top - d.parent.y;
         const highlighted = d.data.leaves.keys.some((key) => key.highlighted) && d.parent.data.leaves.keys.some((key) => key.highlighted);
         return {
           id: i,

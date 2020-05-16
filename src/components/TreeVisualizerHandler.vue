@@ -21,8 +21,9 @@
     </div>
     <Visualizer
       :sequences="sequences"
-      :current="currentSequenceNumber"
-      :current-frame="currentFrame"
+      :current-sequence-number="currentSequenceNumber"
+      :current-frame-number="currentFrame"
+      :tree-type="$route.params.code"
     />
     <div class="arrow-button-container flex mx-auto my-2">
       <div class="history-btn-container">
