@@ -2,18 +2,18 @@
   <v-container
     id="menu-container"
     fluid
-    class="flex-column max-w-3xl menu-container"
+    class="flex-column menu-container"
   >
-    <p />
     <v-container
       fluid
-      class="flex structure-list justify-center"
+      class="flex flex-column structure-list justify-center align-center"
     >
       <StructureItem
         v-for="item in dataStructures"
         :key="item.code"
         :name="item.name"
         :data-structure="item"
+        class="mb-4 mx-4"
       />
     </v-container>
     <v-row
@@ -92,5 +92,14 @@ export default {
 <style scoped>
   .menu-container {
     flex-wrap: wrap;
+  }
+  .structure-list {
+    overflow: scroll;
+    width: fit-content;
+  }
+  @media (min-width: 850px) {
+    .structure-list {
+      flex-direction: row !important;
+    }
   }
 </style>

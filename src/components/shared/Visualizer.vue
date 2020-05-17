@@ -252,7 +252,11 @@ export default {
 
 <style>
   .view-container {
-    height: 600px;
     align-items: center;
+  }
+  @media (min-width: 850px) {
+    .view-container {
+      height: 600px;
+    }
   }
 </style>
